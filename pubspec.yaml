@@ -148,7 +148,7 @@ msix_config:
   app_uri_handler_hosts: i.pximg.net, pixiv.me, pixivision.net
   execution_alias: pixez
   store: false
-  publisher: CN=舰队的偶像-岛风酱!, C=CN
-  sign_msix: true
-  certificate_path: .\cert.pfx
+  # publisher: CN=舰队的偶像-岛风酱!, C=CN
+  # sign_msix: true
+  # certificate_path: .\cert.pfx
   install_certificate: false

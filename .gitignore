@@ -30,6 +30,7 @@
 /build/
 **/*.g.dart
 /lib/generated/
+.fvm/flutter_sdk
 
 # Android related
 **/android/**/gradle-wrapper.jar
@@ -77,6 +78,7 @@
 /.vscode/
 misc/
 msic
+macos/Flutter/GeneratedPluginRegistrant.swift
 
 # Ignore Certificate
 *.pfx

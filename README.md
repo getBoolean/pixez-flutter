@@ -4,6 +4,8 @@
 
 [English README Here](./.github/README_en.md)
 
+Modified to remove jailbreak detection!!!!
+
 使用 Flutter 编写的 pixiv 第三方客户端。
 
 同样支持中国大陆地区直连。

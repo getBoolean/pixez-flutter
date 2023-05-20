@@ -4,6 +4,8 @@
 
 A 3rd-party pixiv client built with Flutter.
 
+Modified to remove jailbreak detection!!!!
+
 Can access pixiv directly from Mainland China.
 
 # Download
@@ -15,7 +17,7 @@ Can access pixiv directly from Mainland China.
 
 # Preview
 
-|![Preview](../.github/preview/2.jpg) | ![Preview](../.github/preview/1.jpg) | 
+|![Preview](../.github/preview/2.jpg) | ![Preview](../.github/preview/1.jpg) |
 |:-------------------:|:------------------------:|
 
 # About this repository
@@ -53,7 +55,7 @@ Got ideas about UI design? You're also welcome to share your opinions.
 
 We have a [manual and FAQ page here (Chinese only)](./FAQ.md).
 
-Mail Feedback: PxezFeedback@outlook.com
+Mail Feedback: <PxezFeedback@outlook.com>
 
 Also, feedback on Telegram: [@PixEzViewer](https://t.me/PixEzViewer)
 

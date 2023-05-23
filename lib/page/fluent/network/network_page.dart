@@ -15,7 +15,7 @@ class NetworkPage extends StatefulWidget {
 }
 
 class _NetworkPageState extends State<NetworkPage> {
-  late bool _automaticallyImplyLeading;
+  // late bool _automaticallyImplyLeading;
   late TextEditingController _textEditingController;
   bool _isCustom = false;
 
@@ -24,7 +24,7 @@ class _NetworkPageState extends State<NetworkPage> {
     _textEditingController = TextEditingController(
       text: userSetting.pictureSource,
     );
-    _automaticallyImplyLeading = widget.automaticallyImplyLeading ?? false;
+    // _automaticallyImplyLeading = widget.automaticallyImplyLeading ?? false;
     super.initState();
   }
 

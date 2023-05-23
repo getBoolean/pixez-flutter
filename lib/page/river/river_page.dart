@@ -33,6 +33,7 @@ class RiverPage extends HookConsumerWidget {
         }
       });
       ref.read(illustsProvider.notifier).fetch(offset: 30);
+      return null;
     }, [scrollController]);
     // ref.read(illustsProvider.notifier).fetch();
 

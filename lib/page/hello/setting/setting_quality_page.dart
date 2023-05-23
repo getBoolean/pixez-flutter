@@ -75,7 +75,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
           onTap: () {
             try {
               if (Platform.isAndroid && !Constants.isGooglePlay)
-                launch('https://github.com/itzXian');
+                launchUrl(Uri.parse('https://github.com/itzXian'));
             } catch (e) {}
           },
           child: Row(
@@ -95,7 +95,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
           onTap: () {
             try {
               if (Platform.isAndroid && !Constants.isGooglePlay)
-                launch('https://github.com/takase1121');
+                launchUrl(Uri.parse('https://github.com/takase1121'));
             } catch (e) {}
           },
           child: Row(
@@ -118,7 +118,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
       onTap: () {
         try {
           if (Platform.isAndroid && !Constants.isGooglePlay)
-            launch('https://github.com/Skimige');
+            launchUrl(Uri.parse('https://github.com/Skimige'));
         } catch (e) {}
       },
       child: Row(
@@ -139,7 +139,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
       onTap: () {
         try {
           if (Platform.isAndroid && !Constants.isGooglePlay)
-            launch('https://github.com/TragicLifeHu');
+            launchUrl(Uri.parse('https://github.com/TragicLifeHu'));
         } catch (e) {}
       },
       child: Row(
@@ -162,7 +162,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
           onTap: () {
             try {
               if (Platform.isAndroid && !Constants.isGooglePlay)
-                launch('https://github.com/karin722');
+                launchUrl(Uri.parse('https://github.com/karin722'));
             } catch (e) {}
           },
           child: Row(children: [
@@ -183,7 +183,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
           onTap: () {
             try {
               if (Platform.isAndroid && !Constants.isGooglePlay)
-                launch('https://github.com/arrow2nd');
+                launchUrl(Uri.parse('https://github.com/arrow2nd'));
             } catch (e) {}
           },
           child: Row(children: [
@@ -207,7 +207,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
       onTap: () {
         try {
           if (Platform.isAndroid && !Constants.isGooglePlay)
-            launch('https://github.com/RivMt');
+            launchUrl(Uri.parse('https://github.com/RivMt'));
         } catch (e) {}
       },
       child: Row(
@@ -228,7 +228,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
       onTap: () {
         try {
           if (Platform.isAndroid && !Constants.isGooglePlay)
-            launch('https://github.com/mytecor');
+            launchUrl(Uri.parse('https://github.com/mytecor'));
         } catch (e) {}
       },
       child: Row(
@@ -249,7 +249,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
       onTap: () {
         try {
           if (Platform.isAndroid && !Constants.isGooglePlay)
-            launch('https://github.com/SugarBlank');
+            launchUrl(Uri.parse('https://github.com/SugarBlank'));
         } catch (e) {}
       },
       child: Row(
@@ -270,7 +270,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
       onTap: () {
         try {
           if (Platform.isAndroid && !Constants.isGooglePlay)
-            launch('https://github.com/kyoyacchi');
+            launchUrl(Uri.parse('https://github.com/kyoyacchi'));
         } catch (e) {}
       },
       child: Row(
@@ -555,7 +555,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
                     data: Theme.of(context).copyWith(
                         tabBarTheme: TabBarTheme(labelColor: Colors.black)),
                     child: TabBar(
-                      labelColor: Theme.of(context).textTheme.headline6!.color,
+                      labelColor: Theme.of(context).textTheme.titleLarge!.color,
                       indicatorSize: TabBarIndicatorSize.label,
                       tabs: tablist,
                       isScrollable: true,
@@ -597,7 +597,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
                     data: Theme.of(context).copyWith(
                         tabBarTheme: TabBarTheme(labelColor: Colors.black)),
                     child: TabBar(
-                      labelColor: Theme.of(context).textTheme.headline6!.color,
+                      labelColor: Theme.of(context).textTheme.titleLarge!.color,
                       indicatorSize: TabBarIndicatorSize.label,
                       tabs: tablist,
                       isScrollable: true,
@@ -626,7 +626,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
                   Icon(Icons.stay_primary_portrait),
                   Observer(builder: (_) {
                     return TabBar(
-                      labelColor: Theme.of(context).textTheme.headline6!.color,
+                      labelColor: Theme.of(context).textTheme.titleLarge!.color,
                       indicatorSize: TabBarIndicatorSize.label,
                       tabs: [
                         Tab(
@@ -668,7 +668,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
                   Icon(Icons.stay_primary_landscape),
                   Observer(builder: (_) {
                     return TabBar(
-                      labelColor: Theme.of(context).textTheme.headline6!.color,
+                      labelColor: Theme.of(context).textTheme.titleLarge!.color,
                       indicatorSize: TabBarIndicatorSize.label,
                       tabs: [
                         Tab(
@@ -886,7 +886,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
                           tabBarTheme: TabBarTheme(labelColor: Colors.black)),
                       child: TabBar(
                         labelColor:
-                            Theme.of(context).textTheme.headline6!.color,
+                            Theme.of(context).textTheme.titleLarge!.color,
                         indicatorSize: TabBarIndicatorSize.label,
                         tabs: tablist,
                         isScrollable: true,

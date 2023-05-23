@@ -133,9 +133,9 @@ class _AboutPageState extends State<AboutPage> {
                   return IconButton(
                     onPressed: () {
                       if (Platform.isAndroid)
-                        launch(Constants.isGooglePlay
+                        launchUrl(Uri.parse(Constants.isGooglePlay
                             ? "https://music.youtube.com/watch?v=qfDhiBUNzwA&feature=share"
-                            : "https://music.apple.com/cn/album/intrauterine-education-single/1515096587");
+                            : "https://music.apple.com/cn/album/intrauterine-education-single/1515096587"));
                     },
                     icon: Container(
                       child: Image.asset(
@@ -238,7 +238,11 @@ class _AboutPageState extends State<AboutPage> {
               if (Platform.isIOS) {
                 var url = 'https://apps.apple.com/cn/app/pixez/id1494435126';
                 try {
-                  await launch(url);
+                  final uri = Uri.tryParse(url);
+                  if (uri == null) {
+                    return;
+                  }
+                  await launchUrl(uri);
                 } catch (e) {}
               }
             },
@@ -270,16 +274,16 @@ class _AboutPageState extends State<AboutPage> {
                                     I18n.of(context).go_to_project_address),
                                 onPressed: () {
                                   try {
-                                    launch(
-                                        'https://github.com/Notsfsssf/pixez-flutter');
+                                    launchUrl(Uri.parse(
+                                        'https://github.com/Notsfsssf/pixez-flutter'));
                                   } catch (e) {}
                                 },
                                 trailing: IconButton(
                                     icon: Icon(FluentIcons.link),
                                     onPressed: () {
                                       try {
-                                        launch(
-                                            'https://github.com/Notsfsssf/pixez-flutter');
+                                        launchUrl(Uri.parse(
+                                            'https://github.com/Notsfsssf/pixez-flutter'));
                                       } catch (e) {}
                                     }),
                               ),
@@ -435,7 +439,7 @@ class _AboutPageState extends State<AboutPage> {
               Card(
                 margin: EdgeInsets.all(8.0),
                 child: ListTile(
-                  leading: Icon(FontAwesomeIcons.coffee),
+                  leading: Icon(FontAwesomeIcons.mugSaucer),
                   title: Text(i.description),
                   subtitle: Text(i.price),
                   onPressed: () {

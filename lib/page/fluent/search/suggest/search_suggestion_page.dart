@@ -16,7 +16,6 @@
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:pixez/er/leader.dart';
 import 'package:pixez/i18n.dart';
@@ -163,6 +162,7 @@ class _SearchSuggestionPageState extends State<SearchSuggestionPage> {
                               );
                             },
                           );
+                        return null;
                       }, childCount: 3),
                     ),
                     visible: idV,

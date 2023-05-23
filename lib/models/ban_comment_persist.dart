@@ -4,7 +4,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 part 'ban_comment_persist.g.dart';
 
 final String columnId = 'id';
-final String columnCommentId= 'comment_id';
+final String columnCommentId = 'comment_id';
 final String columnName = 'name';
 final String tableBanComment = 'banComment';
 

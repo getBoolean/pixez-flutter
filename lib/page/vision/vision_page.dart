@@ -13,7 +13,6 @@ class _VisionPageState extends State<VisionPage> {
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
-
     );
   }
 }

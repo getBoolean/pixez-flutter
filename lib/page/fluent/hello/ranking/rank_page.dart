@@ -29,6 +29,8 @@ import 'package:pixez/page/fluent/hello/ranking/ranking_mode/rank_mode_page.dart
  * 我认为现在的设计不能满足一致性。
  */
 
+// TODO: please just use state management...
+// ignore: must_be_immutable
 class RankPage extends StatefulWidget {
   late ValueNotifier<bool> isFullscreen;
   late Function? toggleFullscreen;
@@ -92,9 +94,6 @@ class _RankPageState extends State<RankPage>
   }
 
   String? toRequestDate(DateTime dateTime) {
-    if (dateTime == null) {
-      return null;
-    }
     return "${dateTime.year}-${dateTime.month}-${dateTime.day}";
   }
 
@@ -192,7 +191,7 @@ class _RankPageState extends State<RankPage>
                         });
                       }
                     },
-                    startYear: 2007,
+                    startDate: DateTime.utc(2007),
                   ),
           );
         } else {

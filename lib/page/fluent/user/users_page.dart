@@ -394,6 +394,8 @@ class _UsersPageState extends State<UsersPage>
     );
   }
 
+  // TODO: Use helper widgets not methods
+  // ignore: unused_element
   Widget _buildComment(BuildContext context) {
     return Container(
       color: FluentTheme.of(context).cardColor,
@@ -558,7 +560,7 @@ class _UsersPageState extends State<UsersPage>
       }
       await dio.download(url.toTrueUrl(), tempFile, deleteOnError: true);
       File file = File(tempFile);
-      if (file != null && file.existsSync()) {
+      if (file.existsSync()) {
         await saveStore.saveToGallery(
             file.readAsBytesSync(),
             Illusts(

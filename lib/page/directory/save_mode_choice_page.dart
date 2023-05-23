@@ -34,7 +34,7 @@ showPathDialog(BuildContext context, {bool isFirst = false}) async {
 }
 
 class SaveModeChoicePage extends StatefulWidget {
-  bool isFirst;
+  final bool isFirst;
 
   SaveModeChoicePage({Key? key, required this.isFirst}) : super(key: key);
 
@@ -134,10 +134,10 @@ class _SaveModeChoicePageState extends State<SaveModeChoicePage>
                         icon: Icon(Icons.question_answer),
                         onPressed: () {
                           Constants.isGooglePlay || userSetting.disableBypassSni
-                              ? launch(
-                                  "https://developer.android.com/training/data-storage/shared/documents-files")
-                              : launch(
-                                  "https://developer.android.google.cn/training/data-storage/shared/documents-files");
+                              ? launchUrl(Uri.parse(
+                                  "https://developer.android.com/training/data-storage/shared/documents-files"))
+                              : launchUrl(Uri.parse(
+                                  "https://developer.android.google.cn/training/data-storage/shared/documents-files"));
                           Navigator.of(context).pop();
                         }),
                     IconButton(

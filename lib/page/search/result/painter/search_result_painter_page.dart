@@ -21,7 +21,7 @@ import 'package:pixez/page/painter/painter_list.dart';
 class SearchResultPainterPage extends StatefulWidget {
   final String word;
 
-  SearchResultPainterPage({Key? key,required this.word}) : super(key: key);
+  SearchResultPainterPage({Key? key, required this.word}) : super(key: key);
 
   @override
   _SearchResultPainterPageState createState() =>
@@ -29,9 +29,10 @@ class SearchResultPainterPage extends StatefulWidget {
 }
 
 class _SearchResultPainterPageState extends State<SearchResultPainterPage> {
-
   @override
   Widget build(BuildContext context) {
-    return PainterList(futureGet: () => apiClient.getSearchUser(widget.word),);
+    return PainterList(
+      futureGet: () => apiClient.getSearchUser(widget.word),
+    );
   }
 }

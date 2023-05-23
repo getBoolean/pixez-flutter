@@ -67,7 +67,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
                   onPressed: () async {
                     try {
                       final name = _userNameController.text.trim();
-                      if (name == null || name.isEmpty) return;
+                      if (name.isEmpty) return;
                       final response =
                           await AccountClient().createProvisionalAccount(name);
                       print(response.data);
@@ -107,7 +107,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
                   onPressed: () async {
                     final url = 'https://www.pixiv.net/terms/?page=term';
                     try {
-                      await launch(url);
+                      await launchUrl(Uri.parse(url));
                     } catch (e) {}
                   },
                 ),

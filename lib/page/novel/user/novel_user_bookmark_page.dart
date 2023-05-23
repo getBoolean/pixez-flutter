@@ -185,8 +185,9 @@ class _NovelUserBookmarkPageState extends State<NovelUserBookmarkPage> {
                                           horizontal: 1),
                                       child: Text(
                                         f.name,
-                                        style:
-                                            Theme.of(context).textTheme.bodySmall,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall,
                                       ),
                                     )
                                 ],

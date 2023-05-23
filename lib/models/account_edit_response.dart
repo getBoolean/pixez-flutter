@@ -20,60 +20,62 @@
 
 import 'dart:convert';
 
-AccountEditResponse accountEditResponseFromJson(String str) => AccountEditResponse.fromJson(json.decode(str));
+AccountEditResponse accountEditResponseFromJson(String str) =>
+    AccountEditResponse.fromJson(json.decode(str));
 
-String accountEditResponseToJson(AccountEditResponse data) => json.encode(data.toJson());
+String accountEditResponseToJson(AccountEditResponse data) =>
+    json.encode(data.toJson());
 
 class AccountEditResponse {
-    bool error;
-    String message;
-    Body body;
+  bool error;
+  String message;
+  Body body;
 
-    AccountEditResponse({
-        required this.error,
-        required this.message,
-        required this.body,
-    });
+  AccountEditResponse({
+    required this.error,
+    required this.message,
+    required this.body,
+  });
 
-    factory AccountEditResponse.fromJson(Map<String, dynamic> json) => AccountEditResponse(
+  factory AccountEditResponse.fromJson(Map<String, dynamic> json) =>
+      AccountEditResponse(
         error: json["error"],
         message: json["message"],
         body: Body.fromJson(json["body"]),
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "error": error,
         "message": message,
         "body": body.toJson(),
-    };
+      };
 }
 
 class Body {
-    bool isSucceed;
-    ValidationErrors validationErrors;
+  bool isSucceed;
+  ValidationErrors validationErrors;
 
-    Body({
-        required this.isSucceed,
-        required this.validationErrors,
-    });
+  Body({
+    required this.isSucceed,
+    required this.validationErrors,
+  });
 
-    factory Body.fromJson(Map<String, dynamic> json) => Body(
+  factory Body.fromJson(Map<String, dynamic> json) => Body(
         isSucceed: json["is_succeed"],
         validationErrors: ValidationErrors.fromJson(json["validation_errors"]),
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "is_succeed": isSucceed,
         "validation_errors": validationErrors.toJson(),
-    };
+      };
 }
 
 class ValidationErrors {
-    ValidationErrors();
+  ValidationErrors();
 
-    factory ValidationErrors.fromJson(Map<String, dynamic> json) => ValidationErrors(
-    );
+  factory ValidationErrors.fromJson(Map<String, dynamic> json) =>
+      ValidationErrors();
 
-    Map<String, dynamic> toJson() => {
-    };
+  Map<String, dynamic> toJson() => {};
 }

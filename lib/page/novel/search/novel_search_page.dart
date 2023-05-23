@@ -193,7 +193,8 @@ class _NovelSearchPageState extends State<NovelSearchPage> {
                             Icon(
                               Icons.delete_outline,
                               size: 18.0,
-                              color: Theme.of(context).textTheme.bodySmall!.color,
+                              color:
+                                  Theme.of(context).textTheme.bodySmall!.color,
                             ),
                             Text(
                               I18n.of(context).clear_search_tag_history,

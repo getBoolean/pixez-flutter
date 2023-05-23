@@ -10,7 +10,8 @@ abstract class _AccountEditStoreBase with Store {
   String? errorString;
 
   @action
- Future<bool> fetch(String newMailAddress, newPassword, oldPassword, newUserAccount) async {
+  Future<bool> fetch(
+      String newMailAddress, newPassword, oldPassword, newUserAccount) async {
     try {
       final client = AccountClient();
       var response = await client.accountEdit(
@@ -31,7 +32,7 @@ abstract class _AccountEditStoreBase with Store {
       } else {
         errorString = e.toString();
       }
-       return false;
+      return false;
     }
   }
 }

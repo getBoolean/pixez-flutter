@@ -213,7 +213,7 @@ class _LightingListState extends State<LightingList> {
             child:
                 Text(':(', style: FluentTheme.of(context).typography.subtitle),
           ),
-          TextButton(
+          HyperlinkButton(
               onPressed: () {
                 _store.fetch(force: true);
               },

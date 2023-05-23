@@ -148,8 +148,11 @@ abstract class _MuteStoreBase with Store {
     await banUserIdProvider.open();
     await banIllustIdProvider.open();
     await banTagProvider.open();
+    // ignore: unused_local_variable
     final banIllust = await banIllustIdProvider.getAllAccount();
+    // ignore: unused_local_variable
     final banUser = await banUserIdProvider.getAllAccount();
+    // ignore: unused_local_variable
     final banTag = await banTagProvider.getAllAccount();
     banTags.map((e) => e.toJson()).toList();
     var entity = {
@@ -168,6 +171,7 @@ abstract class _MuteStoreBase with Store {
     await banTagProvider.open();
     final importBean = jsonDecode(importStr);
     final importMap = importBean as Map<String, dynamic>;
+    // ignore: unused_local_variable
     final illustId = importMap['banillustid'];
     //TODO
   }

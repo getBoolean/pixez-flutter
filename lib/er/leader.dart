@@ -88,7 +88,10 @@ class Leader {
         }
       } catch (e) {
         try {
-          launch(link.toString());
+          final uri = Uri.tryParse(link.toString());
+          if (uri != null) {
+            launchUrl(uri);
+          }
         } catch (e) {}
       }
       return;

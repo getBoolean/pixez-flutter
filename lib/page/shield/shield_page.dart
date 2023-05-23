@@ -16,7 +16,6 @@
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:pixez/er/leader.dart';
@@ -84,7 +83,8 @@ class _ShieldPageState extends State<ShieldPage> {
                       },
                     ),
                     ListTile(
-                      title: Text(I18n.of(context).make_works_with_ai_generated_flags_invisible),
+                      title: Text(I18n.of(context)
+                          .make_works_with_ai_generated_flags_invisible),
                       trailing: Switch(
                         value: muteStore.banAIIllust,
                         onChanged: (v) {

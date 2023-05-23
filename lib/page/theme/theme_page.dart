@@ -231,7 +231,8 @@ class _ThemePageState extends State<ThemePage> with TickerProviderStateMixin {
                   padding: EdgeInsets.all(8.0),
                   child: Text(
                     Theme.of(context).colorScheme.secondary.toString(),
-                    style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                 ),
                 Column(
@@ -239,7 +240,8 @@ class _ThemePageState extends State<ThemePage> with TickerProviderStateMixin {
                   children: <Widget>[
                     InkWell(
                       onTap: () {
-                        _pickColorData(0, Theme.of(context).colorScheme.secondary);
+                        _pickColorData(
+                            0, Theme.of(context).colorScheme.secondary);
                       },
                       child: Container(
                         height: 30,

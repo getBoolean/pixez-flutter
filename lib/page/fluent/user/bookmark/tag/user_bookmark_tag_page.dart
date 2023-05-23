@@ -28,7 +28,6 @@ class UserBookmarkTagPage extends StatefulWidget {
 
 class _UserBookmarkTagPageState extends State<UserBookmarkTagPage>
     with SingleTickerProviderStateMixin {
-
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(

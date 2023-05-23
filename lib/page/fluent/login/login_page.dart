@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildBody(BuildContext context) {
     return FluentTheme(
-      data: ThemeData(
+      data: FluentThemeData(
           accentColor: FluentTheme.of(context).accentColor,
           brightness: FluentTheme.of(context).brightness),
       child: Padding(
@@ -135,7 +135,11 @@ class _LoginPageState extends State<LoginPage> {
                               final url =
                                   'https://www.pixiv.net/terms/?page=term';
                               try {
-                                await launch(url);
+                                final uri = Uri.tryParse(url);
+                                if (uri == null) {
+                                  return;
+                                }
+                                await launchUrl(uri);
                               } catch (e) {}
                             },
                           ),

@@ -178,8 +178,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                         I18n.of(context).history,
                         style: TextStyle(
                             fontSize: 16.0,
-                            color:
-                                Theme.of(context).textTheme.headlineSmall!.color),
+                            color: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .color),
                       ),
                     ],
                   ),

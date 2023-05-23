@@ -566,7 +566,6 @@ class _NovelViewerPageState extends State<NovelViewerPage> {
       BotToast.showText(text: "export ${filePath}");
     } else if (Platform.isIOS) {
       final path = await getApplicationDocumentsDirectory();
-      if (path == null) return;
       final dirPath = Path.join(path.path, "novel_export");
       final dir = Directory(dirPath);
       if (!dir.existsSync()) {

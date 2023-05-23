@@ -81,10 +81,8 @@ class _JobPageState extends State<JobPage> with SingleTickerProviderStateMixin {
     switch (i) {
       case 0:
         return "seed";
-        break;
       case 1:
         return I18n.of(context).running;
-        break;
       case 2:
         return I18n.of(context).complete;
       case 3:
@@ -102,14 +100,12 @@ class _JobPageState extends State<JobPage> with SingleTickerProviderStateMixin {
                 .typography
                 .body!
                 .copyWith(fontSize: 12));
-        break;
       case 1:
         return Text(I18n.of(context).running,
             style: FluentTheme.of(context)
                 .typography
                 .body!
                 .copyWith(fontSize: 12));
-        break;
       case 2:
         return Icon(
           FluentIcons.check_mark,

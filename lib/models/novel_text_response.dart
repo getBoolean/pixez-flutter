@@ -61,7 +61,7 @@ class TextNovel {
   int? id;
   String? title;
 
-  TextNovel({this.id,this.title});
+  TextNovel({this.id, this.title});
 
   factory TextNovel.fromJson(Map<String, dynamic> json) =>
       _$TextNovelFromJson(json);

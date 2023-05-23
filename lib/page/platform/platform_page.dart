@@ -254,8 +254,8 @@ class _PlatformPageState extends State<PlatformPage> {
                       title: InkWell(
                         child: Text("Photo picker"),
                         onTap: () {
-                          launch(
-                              "https://developer.android.com/training/data-storage/shared/photopicker");
+                          launchUrl(Uri.parse(
+                              "https://developer.android.com/training/data-storage/shared/photopicker"));
                         },
                       ),
                       subtitle: Text("use new system-level image selector"),

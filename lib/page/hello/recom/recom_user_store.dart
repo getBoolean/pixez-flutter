@@ -26,6 +26,7 @@ abstract class _RecomUserStoreBase with Store {
   ObservableList<UserPreviews> users = ObservableList();
   EasyRefreshController? controller;
 
+  // ignore: unused_element
   _RecomUserStoreBase({this.controller});
 
   @action

@@ -8,8 +8,6 @@ class NovelRankModePage extends StatefulWidget {
 class _NovelRankModePageState extends State<NovelRankModePage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
-    );
+    return Container();
   }
 }

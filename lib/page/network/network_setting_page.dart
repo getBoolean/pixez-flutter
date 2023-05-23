@@ -39,7 +39,7 @@ class _NetworkSettingPageState extends State<NetworkSettingPage> {
 
   _apiCheck() async {
     try {
-      Response response = await apiClient.walkthroughIllusts();
+      await apiClient.walkthroughIllusts();
       setState(() {
         apiStatus = 1;
       });
@@ -62,7 +62,7 @@ class _NetworkSettingPageState extends State<NetworkSettingPage> {
               (X509Certificate cert, String host, int port) => true;
           return client;
         };
-      Response response = await dio
+      await dio
           .download(trueUrl, (await getTemporaryDirectory()).path + "/s.png",
               onReceiveProgress: (min, max) {
         throw ok();
@@ -120,6 +120,7 @@ class _NetworkSettingPageState extends State<NetworkSettingPage> {
     }
   }
 
+  // ignore: unused_element
   _showApiDialog() {
     showModalBottomSheet(
         context: context,

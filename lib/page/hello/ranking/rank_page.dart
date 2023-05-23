@@ -23,6 +23,8 @@ import 'package:pixez/main.dart';
 import 'package:pixez/page/hello/ranking/rank_store.dart';
 import 'package:pixez/page/hello/ranking/ranking_mode/rank_mode_page.dart';
 
+/// TODO: Use state management instead of variables
+// ignore: must_be_immutable
 class RankPage extends StatefulWidget {
   late ValueNotifier<bool> isFullscreen;
   late Function? toggleFullscreen;
@@ -88,9 +90,6 @@ class _RankPageState extends State<RankPage>
   }
 
   String? toRequestDate(DateTime dateTime) {
-    if (dateTime == null) {
-      return null;
-    }
     return "${dateTime.year}-${dateTime.month}-${dateTime.day}";
   }
 

@@ -31,6 +31,7 @@ abstract class _IllustAboutStoreBase with Store {
   bool fetching = false;
   EasyRefreshController? refreshController;
 
+  // ignore: unused_element
   _IllustAboutStoreBase(this.id, {this.refreshController});
 
   @observable

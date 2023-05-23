@@ -24,7 +24,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pixez/constants.dart';
-import 'package:pixez/custom_icon.dart';
 import 'package:pixez/document_plugin.dart';
 import 'package:pixez/er/leader.dart';
 import 'package:pixez/i18n.dart';
@@ -164,6 +163,7 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
         ));
   }
 
+  // ignore: unused_element
   Widget _buildPadScafford(BuildContext context, BoxConstraints constraint) {
     double radio = constraint.maxHeight / constraint.maxWidth;
     double width = radio * constraint.maxHeight;
@@ -238,17 +238,16 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
     });
     _intentDataStreamSubscription = ReceiveSharingIntent.getMediaStream()
         .listen((List<SharedMediaFile> value) {
-      if (value != null)
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return SauceNaoPage(
-            path: value.first.path,
-          );
-        }));
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        return SauceNaoPage(
+          path: value.first.path,
+        );
+      }));
     }, onError: (err) {
       print("getIntentDataStream error: $err");
     });
     ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
-      if (value != null && value.isNotEmpty)
+      if (value.isNotEmpty)
         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
           return SauceNaoPage(
             path: value.first.path,
@@ -391,7 +390,7 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
     if (prefs.getBool('guide_enable') == null) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => GuidePage()),
-        (route) => route == null,
+        (route) => route.isFirst,
       );
       return;
     }
@@ -399,7 +398,10 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
   }
 }
 
-// 用来实现退出全屏功能的FAB
+/// 用来实现退出全屏功能的FAB
+///
+/// TODO: Use state management instead of variables
+// ignore: must_be_immutable
 class AnimatedToggleFullscreenFAB extends StatefulWidget {
   late bool isFullscreen;
   late Function toggleFullscreen;

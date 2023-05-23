@@ -42,7 +42,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
     super.initState();
     _initMethod();
     final dispose = reaction((_) => directoryStore.checkSuccess, (value) {
-      if (value as bool) Navigator.of(context).pop(directoryStore.path);
+      Navigator.of(context).pop(directoryStore.path);
     });
     dispose();
   }

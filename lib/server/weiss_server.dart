@@ -1,6 +1,3 @@
-
 class WeissServer {
-  static listener() async {
-
-  }
+  static listener() async {}
 }

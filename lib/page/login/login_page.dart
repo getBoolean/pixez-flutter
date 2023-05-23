@@ -139,7 +139,11 @@ class _LoginPageState extends State<LoginPage> {
                               final url =
                                   'https://www.pixiv.net/terms/?page=term';
                               try {
-                                await launch(url);
+                                final uri = Uri.tryParse(url);
+                                if (uri == null) {
+                                  return;
+                                }
+                                await launchUrl(uri);
                               } catch (e) {}
                             },
                           ),

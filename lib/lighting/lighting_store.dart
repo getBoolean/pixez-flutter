@@ -88,6 +88,7 @@ abstract class _LightingStoreBase with Store {
   @observable
   String? errorMessage;
 
+  // ignore: unused_element
   _LightingStoreBase(this.source, {this.onChange, this.portal});
 
   bool okForUser(Illusts illust) {

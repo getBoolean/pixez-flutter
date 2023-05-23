@@ -40,4 +40,3 @@ class CryptoPlugin {
     return codeChallenge;
   }
 }
- 

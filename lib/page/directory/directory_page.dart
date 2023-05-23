@@ -42,14 +42,13 @@ class _DirectoryPageState extends State<DirectoryPage> {
     super.initState();
     _initMethod();
     final dispose = reaction((_) => directoryStore.checkSuccess, (value) {
-      if (value as bool) Navigator.of(context).pop(directoryStore.path);
+      Navigator.of(context).pop(directoryStore.path);
     });
     dispose();
   }
 
   Future<void> _initMethod() async {
-    PermissionStatus statuses =
-        await Permission.storage.request();
+    PermissionStatus statuses = await Permission.storage.request();
     if (statuses == PermissionStatus.denied) {
       BotToast.showText(text: I18n.of(context).permission_denied);
       Navigator.of(context).pop();
@@ -158,9 +157,9 @@ class _DirectoryPageState extends State<DirectoryPage> {
                           FileSystemEntity fileSystemEntity = list[index];
                           return Visibility(
                             visible: !(fileSystemEntity.path
-                                    .split("/")
-                                    .last
-                                    .startsWith(".")),
+                                .split("/")
+                                .last
+                                .startsWith(".")),
                             child: ListTile(
                               leading: fileSystemEntity is Directory
                                   ? Icon(Icons.folder)

@@ -14,8 +14,6 @@
  *
  */
 
-import 'dart:io';
-
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:pixez/component/selectable_html.dart';
@@ -24,7 +22,6 @@ import 'package:pixez/i18n.dart';
 import 'package:pixez/models/user_detail.dart';
 import 'package:pixez/page/fluent/follow/follow_list.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class UserDetailPage extends StatefulWidget {

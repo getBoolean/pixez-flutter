@@ -167,8 +167,8 @@ class _SettingSelectPageState extends State<SettingSelectPage> {
 
 class SettingSelectRow extends StatefulWidget {
   final String title;
-  bool select;
-  GestureTapCallback? onTap;
+  final bool select;
+  final GestureTapCallback? onTap;
   SettingSelectRow(
       {Key? key, required this.title, required this.select, this.onTap})
       : super(key: key);
@@ -207,8 +207,8 @@ class _SettingSelectRowState extends State<SettingSelectRow> {
 
 class SettingRow extends StatefulWidget {
   final String title;
-  String? subTitle;
-  GestureTapCallback? onTap;
+  final String? subTitle;
+  final GestureTapCallback? onTap;
   SettingRow({Key? key, required this.title, this.subTitle, this.onTap})
       : super(key: key);
 

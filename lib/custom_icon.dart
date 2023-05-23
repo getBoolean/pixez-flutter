@@ -16,6 +16,5 @@
 import 'package:flutter/cupertino.dart';
 
 class CustomIcons {
-  static const IconData leaderboard =
-      IconData(0xe800, fontFamily: "iconfont");
+  static const IconData leaderboard = IconData(0xe800, fontFamily: "iconfont");
 }

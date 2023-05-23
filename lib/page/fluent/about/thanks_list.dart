@@ -18,7 +18,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:pixez/page/about/thanks_peoples.dart';
 
 class ThanksList extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return ListView(

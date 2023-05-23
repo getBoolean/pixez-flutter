@@ -73,7 +73,8 @@ class TranslateTextSelectionControls extends MaterialTextSelectionControls {
             anchorAbove: anchor,
           ),
           child: TextSelectionToolbar(
-            handleCut: canCut(delegate) ? () => handleCut(delegate,null) : null,
+            handleCut:
+                canCut(delegate) ? () => handleCut(delegate, null) : null,
             handleCopy: canCopy(delegate)
                 ? () => handleCopy(delegate, clipboardStatus)
                 : null,

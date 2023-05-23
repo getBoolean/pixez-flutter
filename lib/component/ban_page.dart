@@ -69,9 +69,8 @@ class _BanPageState extends State<BanPage> {
             ),
             Theme(
               data: Theme.of(context).copyWith(
-                  colorScheme: Theme.of(context)
-                      .colorScheme
-                      .copyWith(primary: Theme.of(context).colorScheme.primary)),
+                  colorScheme: Theme.of(context).colorScheme.copyWith(
+                      primary: Theme.of(context).colorScheme.primary)),
               child: TextButton(
                   onPressed: () {
                     if (widget.onPressed != null) widget.onPressed!();

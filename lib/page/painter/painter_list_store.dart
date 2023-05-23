@@ -49,7 +49,7 @@ abstract class _PainterListStoreBase with Store {
         _controller.finishLoad(IndicatorResult.fail);
       }
     } else {
-        _controller.finishLoad(IndicatorResult.noMore);
+      _controller.finishLoad(IndicatorResult.noMore);
     }
   }
 }

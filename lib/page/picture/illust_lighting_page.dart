@@ -516,10 +516,8 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
   }
 
   List<Widget> _buildPhotoList(Illusts data) {
-    final height = data != null
-        ? ((data.height.toDouble() / data.width) *
-            MediaQuery.of(context).size.width)
-        : 150.0;
+    final height = (data.height.toDouble() / data.width) *
+        MediaQuery.of(context).size.width;
     return [
       if (data.type == "ugoira")
         SliverToBoxAdapter(
@@ -1134,12 +1132,10 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                             Navigator.of(context).pop();
                             await Reporter.show(
                                 context,
-                                () async => {
-                                      await muteStore.insertBanIllusts(
-                                          BanIllustIdPersist(
-                                              illustId: widget.id.toString(),
-                                              name: illusts.title))
-                                    });
+                                () async => await muteStore.insertBanIllusts(
+                                    BanIllustIdPersist(
+                                        illustId: widget.id.toString(),
+                                        name: illusts.title)));
                           } else {
                             await showDialog(
                                 context: context,

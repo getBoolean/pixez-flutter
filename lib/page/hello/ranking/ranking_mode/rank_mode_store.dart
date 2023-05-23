@@ -29,14 +29,13 @@ abstract class _RankModeStoreBase with Store {
   _RankModeStoreBase(this.mode, this.date, this.client);
 
   @observable
-  ObservableList<Illusts> illusts =ObservableList();
+  ObservableList<Illusts> illusts = ObservableList();
   @action
   Future<void> start() async {
     try {
       final response = await client.getIllustRanking(mode, date);
       Recommend recommend = Recommend.fromJson(response.data);
       illusts.addAll(recommend.illusts);
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 }

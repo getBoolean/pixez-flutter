@@ -23,12 +23,9 @@ import 'package:pixez/component/fluent/painter_avatar.dart';
 import 'package:pixez/component/selectable_html.dart';
 import 'package:pixez/er/leader.dart';
 import 'package:pixez/i18n.dart';
-import 'package:pixez/main.dart';
-import 'package:pixez/models/ban_tag.dart';
 import 'package:pixez/models/illust.dart';
 import 'package:pixez/page/fluent/comment/comment_page.dart';
 import 'package:pixez/page/fluent/picture/row_card.dart';
-import 'package:pixez/page/fluent/search/result_page.dart';
 import 'package:pixez/page/picture/illust_detail_store.dart';
 
 class GestureMe extends GestureRecognizer {
@@ -75,14 +72,12 @@ class IllustDetailBody extends StatelessWidget {
                           height: 70,
                           width: 70,
                           child: Container(
-                            decoration: illust != null
-                                ? BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: _store.isFollow
-                                        ? Colors.yellow
-                                        : FluentTheme.of(context).accentColor,
-                                  )
-                                : BoxDecoration(),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _store.isFollow
+                                  ? Colors.yellow
+                                  : FluentTheme.of(context).accentColor,
+                            ),
                           ),
                         ),
                       ),

@@ -75,8 +75,7 @@ class TagsR {
     required this.isRegistered,
   });
 
-  factory TagsR.fromJson(Map<String, dynamic> json) =>
-      _$TagsRFromJson(json);
+  factory TagsR.fromJson(Map<String, dynamic> json) => _$TagsRFromJson(json);
 
   Map<String, dynamic> toJson() => _$TagsRToJson(this);
 

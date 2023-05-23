@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:pixez/i18n.dart';
 import 'package:pixez/lighting/lighting_store.dart';

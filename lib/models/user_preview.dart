@@ -57,7 +57,7 @@ class UserPreviewsNovel {
   String? caption;
   @JsonKey(name: 'image_urls')
   ImageUrls imageUrls;
-  
+
   UserPreviewsNovel({
     required this.id,
     required this.title,

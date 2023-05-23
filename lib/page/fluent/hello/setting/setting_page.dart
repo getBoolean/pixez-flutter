@@ -333,6 +333,7 @@ class _SettingPageState extends State<SettingPage> {
     }
   }
 
+  // ignore: unused_element
   _showMessage(BuildContext context) async {
     final link =
         "https://cdn.jsdelivr.net/gh/Notsfsssf/pixez-flutter@master/assets/json/host.json";
@@ -380,8 +381,9 @@ class _SettingPageState extends State<SettingPage> {
     }
   }
 
+  // ignore: unused_element
   _showCacheBottomSheet(BuildContext context) async {
-    final result = await showDialog(
+    await showDialog(
         context: context,
         // shape: const RoundedRectangleBorder(
         //     borderRadius: BorderRadius.only(

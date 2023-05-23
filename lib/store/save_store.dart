@@ -139,9 +139,7 @@ abstract class _SaveStoreBase with Store {
                                     stream.entity as QueueRetryEntity;
                                 final id = entity.taskPersist.id;
                                 if (id != null) {
-                                  final result = await fetcher
-                                      .taskPersistProvider
-                                      .remove(id);
+                                  await fetcher.taskPersistProvider.remove(id);
                                   _joinOnDart(entity.url, entity.illusts,
                                       entity.fileName);
                                 }
@@ -370,7 +368,7 @@ abstract class _SaveStoreBase with Store {
       //IOS APP STORE REVIEW
       final status = await DocumentPlugin.permissionStatus() ?? false;
       if (!status) {
-        final auth = await DocumentPlugin.requestPermission();
+        await DocumentPlugin.requestPermission();
       }
     }
     String memType;

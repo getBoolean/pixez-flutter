@@ -29,8 +29,7 @@ class LPrinter {
     if (kDebugMode) print(i);
   }
 
-  static void t(i) {
-  }
+  static void t(i) {}
 
   static var _buffer = StringBuffer();
 

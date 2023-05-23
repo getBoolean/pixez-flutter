@@ -39,7 +39,7 @@ showPathDialog(BuildContext context, {bool isFirst = false}) async {
 }
 
 class SaveModeChoicePage extends StatefulWidget {
-  bool isFirst;
+  final bool isFirst;
 
   SaveModeChoicePage({Key? key, required this.isFirst}) : super(key: key);
 
@@ -51,14 +51,14 @@ class _SaveModeChoicePageState extends State<SaveModeChoicePage>
     with SingleTickerProviderStateMixin {
   int groupValue = 0;
   late AnimationController _animationController;
-  late Animation<Color?> _animation;
+  // late Animation<Color?> _animation;
 
   @override
   void initState() {
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-    _animation = ColorTween(begin: Colors.blue, end: Colors.red)
-        .animate(_animationController);
+    // _animation = ColorTween(begin: Colors.blue, end: Colors.red)
+    //     .animate(_animationController);
     _animationController.addListener(() {
       setState(() {});
     });
@@ -137,10 +137,10 @@ class _SaveModeChoicePageState extends State<SaveModeChoicePage>
                     icon: Icon(FluentIcons.book_answers),
                     onPressed: () {
                       Constants.isGooglePlay || userSetting.disableBypassSni
-                          ? launch(
-                              "https://developer.android.com/training/data-storage/shared/documents-files")
-                          : launch(
-                              "https://developer.android.google.cn/training/data-storage/shared/documents-files");
+                          ? launchUrl(Uri.parse(
+                              "https://developer.android.com/training/data-storage/shared/documents-files"))
+                          : launchUrl(Uri.parse(
+                              "https://developer.android.google.cn/training/data-storage/shared/documents-files"));
                       Navigator.of(context).pop();
                     }),
                 IconButton(

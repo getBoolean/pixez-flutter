@@ -22,7 +22,6 @@ jobs:
         with:
           channel: "stable"
       - run: flutter pub get
-      - run: flutter clean
       - run: dart run build_runner build --delete-conflicting-outputs
       # Zip into IPA from here:
       # https://gist.github.com/devhammed/617d920b7ee886591a46c22633ab0093
@@ -52,7 +51,6 @@ jobs:
         with:
           channel: "stable"
       - run: flutter pub get
-      - run: flutter clean
       - run: dart run build_runner build --delete-conflicting-outputs
       - name: Build Android AppBundle
         run: flutter build appbundle --release
@@ -73,7 +71,6 @@ jobs:
         with:
           channel: "stable"
       - run: flutter pub get
-      - run: flutter clean
       - run: dart run build_runner build --delete-conflicting-outputs
       - name: Build Android APK
         run: flutter build apk --release

@@ -3,11 +3,11 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - master
       - release
   pull_request:
     branches:
-      - main
+      - master
       - release
 
 jobs:

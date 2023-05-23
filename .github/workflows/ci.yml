@@ -33,7 +33,7 @@ jobs:
           cd Payload
           ln -s ../Runner.app
           cd ..
-          zip -r bookadapt_unsigned.ipa Payload
+          zip -r app-release.ipa Payload
       - name: Upload IPA
         uses: actions/upload-artifact@v3
         with:

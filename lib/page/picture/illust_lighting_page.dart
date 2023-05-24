@@ -18,7 +18,6 @@ import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_refresh/easy_refresh.dart';
-import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -213,115 +212,102 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return ExtendedTextSelectionPointerHandler(
-      builder: (states) {
-        return Listener(
-          child: _buildBody(context),
-          behavior: HitTestBehavior.translucent,
-          onPointerDown: (value) {
-            for (var state in states) {
-              if (!state.containsPosition(value.position)) {
-                state.clearSelection();
-              }
-            }
-            if (_focusNode.hasFocus) _focusNode.unfocus();
-          },
-          onPointerMove: (value) {
-            for (var state in states) {
-              state.clearSelection();
-            }
-            if (_focusNode.hasFocus) _focusNode.unfocus();
-          },
-        );
-      },
-    );
+    return _buildBody(context);
   }
 
   Widget _buildBody(BuildContext context) {
     return Container(
-      child: Scaffold(
-        extendBody: true,
-        extendBodyBehindAppBar: true,
-        floatingActionButton: GestureDetector(
-          onLongPress: () {
-            _showBookMarkTag();
-          },
-          child: Observer(builder: (context) {
-            return Visibility(
-              visible: _illustStore.errorMessage == null,
-              child: FloatingActionButton(
-                heroTag: widget.id,
-                onPressed: () => _illustStore.star(
-                    restrict:
-                        userSetting.defaultPrivateLike ? "private" : "public"),
-                child: Observer(builder: (_) {
-                  return StarIcon(
-                    state: _illustStore.state,
-                  );
-                }),
-              ),
-            );
-          }),
-        ),
-        body: Observer(builder: (_) {
-          if (!tempView)
-            for (var i in muteStore.banillusts) {
-              if (i.illustId == widget.id.toString()) {
-                return BanPage(
-                  name: "${I18n.of(context).illust}\n${i.name}\n",
-                  onPressed: () {
-                    setState(() {
-                      tempView = true;
-                    });
-                  },
-                );
-              }
-            }
-          if (!tempView && _illustStore.illusts != null) {
-            for (var j in muteStore.banUserIds) {
-              if (j.userId == _illustStore.illusts!.user.id.toString()) {
-                return BanPage(
-                  name: "${I18n.of(context).painter}\n${j.name}\n",
-                  onPressed: () {
-                    setState(() {
-                      tempView = true;
-                    });
-                  },
-                );
-              }
-            }
-            for (var t in muteStore.banTags) {
-              for (var t1 in _illustStore.illusts!.tags) {
-                if (t.name == t1.name)
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: Scaffold(
+          extendBody: true,
+          extendBodyBehindAppBar: true,
+          floatingActionButton: GestureDetector(
+            onLongPress: () {
+              _showBookMarkTag();
+            },
+            child: Observer(builder: (context) {
+              return Visibility(
+                visible: _illustStore.errorMessage == null,
+                child: FloatingActionButton(
+                  heroTag: widget.id,
+                  onPressed: () => _illustStore.star(
+                      restrict: userSetting.defaultPrivateLike
+                          ? "private"
+                          : "public"),
+                  child: Observer(builder: (_) {
+                    return StarIcon(
+                      state: _illustStore.state,
+                    );
+                  }),
+                ),
+              );
+            }),
+          ),
+          body: Observer(builder: (_) {
+            if (!tempView)
+              for (var i in muteStore.banillusts) {
+                if (i.illustId == widget.id.toString()) {
                   return BanPage(
-                    name: "${I18n.of(context).tag}\n${t.name}\n",
+                    name: "${I18n.of(context).illust}\n${i.name}\n",
                     onPressed: () {
                       setState(() {
                         tempView = true;
                       });
                     },
                   );
+                }
+              }
+            if (!tempView && _illustStore.illusts != null) {
+              for (var j in muteStore.banUserIds) {
+                if (j.userId == _illustStore.illusts!.user.id.toString()) {
+                  return BanPage(
+                    name: "${I18n.of(context).painter}\n${j.name}\n",
+                    onPressed: () {
+                      setState(() {
+                        tempView = true;
+                      });
+                    },
+                  );
+                }
+              }
+              for (var t in muteStore.banTags) {
+                for (var t1 in _illustStore.illusts!.tags) {
+                  if (t.name == t1.name)
+                    return BanPage(
+                      name: "${I18n.of(context).tag}\n${t.name}\n",
+                      onPressed: () {
+                        setState(() {
+                          tempView = true;
+                        });
+                      },
+                    );
+                }
               }
             }
-          }
-          return Container(
-            child: Stack(
-              children: [
-                _buildContent(context, _illustStore.illusts),
-                _buildAppbar()
-              ],
-            ),
-          );
-        }),
+            return Container(
+              child: Stack(
+                children: [
+                  _buildContent(context, _illustStore.illusts),
+                  _buildAppbar()
+                ],
+              ),
+            );
+          }),
+        ),
       ),
     );
   }
 
   Widget colorText(String text, BuildContext context) {
-    return ExtendedText(
-      text,
-      style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-      selectionEnabled: true,
+    return SelectionArea(
+      child: Text(
+        text,
+        style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+      ),
     );
   }
 
@@ -516,10 +502,8 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
   }
 
   List<Widget> _buildPhotoList(Illusts data) {
-    final height = data != null
-        ? ((data.height.toDouble() / data.width) *
-            MediaQuery.of(context).size.width)
-        : 150.0;
+    final height = ((data.height.toDouble() / data.width) *
+        MediaQuery.of(context).size.width);
     return [
       if (data.type == "ugoira")
         SliverToBoxAdapter(
@@ -846,11 +830,10 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Container(
-                    child: ExtendedText(
+                  SelectionArea(
+                    child: Text(
                       illust.title,
                       style: Theme.of(context).textTheme.bodyMedium,
-                      selectionEnabled: true,
                     ),
                   ),
                   Container(
@@ -858,13 +841,12 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                   ),
                   Hero(
                     tag: illust.user.name + this.hashCode.toString(),
-                    child: Container(
-                      child: ExtendedText(
+                    child: SelectionArea(
+                      child: Text(
                         illust.user.name,
                         style: TextStyle(
                             color:
                                 Theme.of(context).textTheme.bodySmall!.color),
-                        selectionEnabled: true,
                       ),
                     ),
                   ),
@@ -1134,12 +1116,10 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                             Navigator.of(context).pop();
                             await Reporter.show(
                                 context,
-                                () async => {
-                                      await muteStore.insertBanIllusts(
-                                          BanIllustIdPersist(
-                                              illustId: widget.id.toString(),
-                                              name: illusts.title))
-                                    });
+                                () async => await muteStore.insertBanIllusts(
+                                    BanIllustIdPersist(
+                                        illustId: widget.id.toString(),
+                                        name: illusts.title)));
                           } else {
                             await showDialog(
                                 context: context,

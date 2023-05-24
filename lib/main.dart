@@ -56,15 +56,6 @@ OnezeroClient onezeroClient = OnezeroClient();
 final SplashStore splashStore = SplashStore(onezeroClient);
 final Fetcher fetcher = new Fetcher();
 
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-  }
-}
-
 main(List<String> args) async {
   if (Platform.isWindows || Platform.isLinux) {
     sqfliteFfiInit();
@@ -103,34 +94,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     saveStore.dispose();
     topStore.dispose();
     fetcher.stop();
+    subscription.cancel();
     if (Platform.isIOS) WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
-  // CustomFooter _buildCustomFooter() {
-  //   return CustomFooter(
-  //     builder: (BuildContext context, LoadStatus? mode) {
-  //       Widget body;
-  //       if (mode == LoadStatus.idle) {
-  //         body = Text(I18n.of(context).pull_up_to_load_more);
-  //       } else if (mode == LoadStatus.loading) {
-  //         body = CircularProgressIndicator();
-  //       } else if (mode == LoadStatus.failed) {
-  //         body = Text(I18n.of(context).loading_failed_retry_message);
-  //       } else if (mode == LoadStatus.canLoading) {
-  //         body = Text(I18n.of(context).let_go_and_load_more);
-  //       } else {
-  //         body = Text(I18n.of(context).no_more_data);
-  //       }
-  //       return Container(
-  //         height: 55.0,
-  //         child: Center(child: body),
-  //       );
-  //     },
-  //   );
-  // }
+  late StreamSubscription<String> subscription;
+
   @override
   void initState() {
+    subscription = topStore.topStream.listen((event) {
+      if (event == "main") {
+        setState(() {});
+      }
+    });
     Hoster.init();
     Hoster.syncRemote();
     userSetting.init();
@@ -140,23 +117,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     muteStore.fetchBanUserIds();
     muteStore.fetchBanIllusts();
     muteStore.fetchBanTags();
-    initMethod();
     fetcher.start();
     super.initState();
     if (Platform.isIOS) WidgetsBinding.instance.addObserver(this);
-  }
-
-  initMethod() async {
-    if (userSetting.disableBypassSni) return;
-  }
-
-  Future<void> clean() async {
-    final path = await saveStore.findLocalPath();
-    Directory directory = Directory(path);
-    List<FileSystemEntity> list = directory.listSync(recursive: true);
-    if (list.length > 180) {
-      directory.deleteSync(recursive: true);
-    }
   }
 
   @override
@@ -167,51 +130,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Widget _buildMaterial(BuildContext context) {
-    return Observer(builder: (_) {
-      final botToastBuilder = BotToastInit();
-      final myBuilder = (BuildContext context, Widget? widget) {
-        if (userSetting.nsfwMask) {
-          final needShowMask = (Platform.isAndroid
-              ? (_appState == AppLifecycleState.paused ||
-                  _appState == AppLifecycleState.paused)
-              : _appState == AppLifecycleState.inactive);
-          return Stack(
-            children: [
-              widget ?? Container(),
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 500),
-                child: needShowMask
-                    ? Container(
-                        color: Theme.of(context).canvasColor,
-                        child: Center(
-                          child: Icon(Icons.privacy_tip_outlined),
-                        ),
-                      )
-                    : null,
-              )
-            ],
-          );
-        } else {
-          return widget;
-        }
-      };
-      return DynamicColorBuilder(
-          builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        ColorScheme lightColorScheme;
-        ColorScheme darkColorScheme;
-
-        if (lightDynamic != null && darkDynamic != null) {
-          lightColorScheme = lightDynamic.harmonized();
-          darkColorScheme = darkDynamic.harmonized();
-        } else {
-          lightColorScheme = ColorScheme.fromSeed(
-            seedColor: _brandBlue,
-          );
-          darkColorScheme = ColorScheme.fromSeed(
-            seedColor: _brandBlue,
-            brightness: Brightness.dark,
-          );
-        }
+    final botToastBuilder = BotToastInit();
+    return DynamicColorBuilder(
+        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+      ColorScheme lightColorScheme;
+      ColorScheme darkColorScheme;
+      if (userSetting.useDynamicColor &&
+          lightDynamic != null &&
+          darkDynamic != null) {
+        lightColorScheme = lightDynamic.harmonized();
+        darkColorScheme = darkDynamic.harmonized();
+      } else {
+        Color primary = userSetting.themeData.colorScheme.primary;
+        lightColorScheme = ColorScheme.fromSeed(
+          seedColor: primary,
+        );
+        darkColorScheme = ColorScheme.fromSeed(
+          seedColor: primary,
+          brightness: Brightness.dark,
+        );
+      }
+      return Observer(builder: (_) {
         return MaterialApp(
           navigatorObservers: [BotToastNavigatorObserver(), routeObserver],
           locale: userSetting.locale,
@@ -226,7 +165,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           }),
           title: 'PixEz',
           builder: (context, child) {
-            if (Platform.isIOS) child = myBuilder(context, child);
+            if (Platform.isIOS) child = _buildMaskBuilder(context, child);
             child = botToastBuilder(context, child);
             return child;
           },
@@ -239,9 +178,36 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   userSetting.isAMOLED ? Colors.black : null,
               colorScheme: darkColorScheme),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales, // Add this line
+          supportedLocales: AppLocalizations.supportedLocales, 
         );
       });
     });
+  }
+
+  _buildMaskBuilder(BuildContext context, Widget? widget) {
+    if (userSetting.nsfwMask) {
+      final needShowMask = (Platform.isAndroid
+          ? (_appState == AppLifecycleState.paused ||
+              _appState == AppLifecycleState.paused)
+          : _appState == AppLifecycleState.inactive);
+      return Stack(
+        children: [
+          widget ?? Container(),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            child: needShowMask
+                ? Container(
+                    color: Theme.of(context).canvasColor,
+                    child: Center(
+                      child: Icon(Icons.privacy_tip_outlined),
+                    ),
+                  )
+                : null,
+          )
+        ],
+      );
+    } else {
+      return widget;
+    }
   }
 }

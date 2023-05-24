@@ -36,6 +36,44 @@ class _ColorPickPageState extends State<ColorPickPage> {
     super.initState();
   }
 
+  final skinList = [
+    ThemeData(
+      brightness: Brightness.light,
+      primaryColor: Colors.cyan[500],
+      indicatorColor: Colors.cyan[500],
+    ),
+    ThemeData(
+      brightness: Brightness.light,
+      primaryColor: Colors.pink[500],
+      indicatorColor: Colors.pink[500],
+    ),
+    ThemeData(
+      brightness: Brightness.light,
+      primaryColor: Colors.green[500],
+      indicatorColor: Colors.green[600],
+    ),
+    ThemeData(
+      brightness: Brightness.light,
+      primaryColor: Colors.brown[500],
+      indicatorColor: Colors.brown[600],
+    ),
+    ThemeData(
+      brightness: Brightness.light,
+      primaryColor: Colors.purple[500],
+      indicatorColor: Colors.purple[600],
+    ),
+    ThemeData(
+      brightness: Brightness.light,
+      primaryColor: Colors.blue[500],
+      indicatorColor: Colors.blue[500],
+    ),
+    ThemeData(
+      brightness: Brightness.light, 
+      primaryColor: Color(0xFFFB7299),
+      indicatorColor: Color(0xFFFB7299),
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,19 +138,43 @@ class _ColorPickPageState extends State<ColorPickPage> {
               })
         ],
       ),
-      body: ListView(
-        padding: EdgeInsets.symmetric(vertical: 8.0),
-        children: <Widget>[
-          ColorPicker(
-            enableAlpha: false,
-            pickerColor: pickerColor,
-            onColorChanged: (Color color) {
-              setState(() {
-                pickerColor = color;
-              });
-            },
-            pickerAreaHeightPercent: 0.8,
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ColorPicker(
+                enableAlpha: false,
+                pickerColor: pickerColor,
+                onColorChanged: (Color color) {
+                  setState(() {
+                    pickerColor = color;
+                  });
+                },
+                pickerAreaHeightPercent: 0.8,
+              ),
+            ),
           ),
+          SliverGrid.count(
+            crossAxisCount: 3,
+            children: [
+              for (final i in skinList)
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      pickerColor = i.primaryColor;
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: i.primaryColor,
+                    ),
+                  ),
+                )
+            ],
+          )
         ],
       ),
     );
@@ -133,57 +195,6 @@ class ThemePage extends StatefulWidget {
 }
 
 class _ThemePageState extends State<ThemePage> with TickerProviderStateMixin {
-  final skinList = [
-    ThemeData(
-      brightness: Brightness.light,
-      primaryColor: Colors.cyan[500],
-      indicatorColor: Colors.cyan[500],
-    ),
-    ThemeData(
-      brightness: Brightness.light,
-      primaryColor: Colors.pink[500],
-      indicatorColor: Colors.pink[500],
-    ),
-    ThemeData(
-      brightness: Brightness.light,
-      primaryColor: Colors.green[500],
-      indicatorColor: Colors.green[600],
-    ),
-    ThemeData(
-      brightness: Brightness.light,
-      primaryColor: Colors.brown[500],
-      indicatorColor: Colors.brown[600],
-    ),
-    ThemeData(
-      brightness: Brightness.light,
-      primaryColor: Colors.purple[500],
-      indicatorColor: Colors.purple[600],
-    ),
-    ThemeData(
-      brightness: Brightness.light,
-      primaryColor: Colors.blue[500],
-      indicatorColor: Colors.blue[500],
-    ),
-    ThemeData(
-      brightness: Brightness.light,
-      primaryColor: Color(0xFFFB7299),
-      indicatorColor: Color(0xFFFB7299),
-    ),
-  ];
-
-  Future<void> _pickColorData(int index, Color pickerColor) async {
-    Color? result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => ColorPickPage(initialColor: pickerColor)));
-    if (result != null) {
-      var data = <String>[
-        userSetting.themeData.colorScheme.secondary.toString(),
-        userSetting.themeData.primaryColor.toString(),
-      ];
-      data[index] = "(0x${result.value.toRadixString(16)})";
-      userSetting.setThemeData(data);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -213,102 +224,66 @@ class _ThemePageState extends State<ThemePage> with TickerProviderStateMixin {
                   ),
                   Tab(text: I18n.of(context).dark)
                 ])),
-        body: ListView(
-          children: <Widget>[
-            Observer(builder: (_) {
-              return Card(
-                  child: SwitchListTile(
-                value: userSetting.isAMOLED,
-                onChanged: (v) => userSetting.setIsAMOLED(v),
-                title: Text("AMOLED"),
-              ));
-            }),
-            Card(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    Theme.of(context).colorScheme.secondary.toString(),
-                    style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+        body: Observer(builder: (_) {
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Card(
+                    child: SwitchListTile(
+                  value: userSetting.isAMOLED,
+                  onChanged: (v) => userSetting.setIsAMOLED(v),
+                  title: Text("AMOLED"),
+                )),
+              ),
+              SliverToBoxAdapter(
+                child: Card(
+                    child: SwitchListTile(
+                  value: userSetting.useDynamicColor,
+                  onChanged: (v) async {
+                    await userSetting.setUseDynamicColor(v);
+                    topStore.setTop("main");
+                  },
+                  title: Text("Dynamic color"),
+                )),
+              ),
+              if (!userSetting.useDynamicColor)
+                SliverToBoxAdapter(
+                  child: Card(
+                    child: ListTile(
+                      leading: SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: userSetting.themeData.colorScheme.primary,
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
+                      ),
+                      title: Text("Seed Color"),
+                      onTap: () {
+                        _pickColor();
+                      },
+                    ),
                   ),
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () {
-                        _pickColorData(0, Theme.of(context).colorScheme.secondary);
-                      },
-                      child: Container(
-                        height: 30,
-                        color: Theme.of(context).colorScheme.secondary,
-                        child: Center(child: Text("accentColor")),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        _pickColorData(1, Theme.of(context).primaryColor);
-                      },
-                      child: Container(
-                        height: 30,
-                        color: Theme.of(context).primaryColor,
-                        child: Center(child: Text("primaryColor")),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            )),
-            GridView.builder(
-                shrinkWrap: true,
-                itemCount: skinList.length,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                itemBuilder: (context, index) {
-                  final skin = skinList[index];
-                  return Card(
-                      child: InkWell(
-                    onTap: () {
-                      userSetting.setThemeData(<String>[
-                        skin.colorScheme.secondary.toString(),
-                        skin.primaryColor.toString(),
-                      ]);
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            skin.colorScheme.secondary.toString(),
-                            style: TextStyle(color: skin.colorScheme.secondary),
-                          ),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Container(
-                              height: 30,
-                              color: skin.primaryColor,
-                              child: Center(child: Text("primaryColor")),
-                            ),
-                            Container(
-                              height: 30,
-                              color: skin.colorScheme.secondary,
-                              child: Center(child: Text("accentColor")),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ));
-                })
-          ],
-        ),
+                )
+            ],
+          );
+        }),
       );
     });
+  }
+
+  _pickColor() async {
+    Color? result = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ColorPickPage(
+            initialColor: userSetting.themeData.colorScheme.primary)));
+    if (result != null) {
+      final data = [
+        "(0x${result.value.toRadixString(16)})",
+        "(0x${result.value.toRadixString(16)})"
+      ];
+      await userSetting.setThemeData(data);
+      topStore.setTop("main");
+    }
   }
 }

@@ -26,7 +26,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pixez/component/painter_avatar.dart';
 import 'package:pixez/component/pixiv_image.dart';
 import 'package:pixez/component/selectable_html.dart';
-import 'package:pixez/component/text_selection_toolbar.dart';
 import 'package:pixez/er/leader.dart';
 import 'package:pixez/er/lprinter.dart';
 import 'package:pixez/exts.dart';
@@ -263,8 +262,6 @@ class _NovelViewerPageState extends State<NovelViewerPage> {
                     padding: const EdgeInsets.all(16.0),
                     child: ExtendedText(
                       _novelStore.novelTextResponse!.novelText,
-                      selectionControls: TranslateTextSelectionControls(),
-                      selectionEnabled: true,
                       specialTextSpanBuilder: NovelSpecialTextSpanBuilder(),
                       style: _textStyle,
                     ),

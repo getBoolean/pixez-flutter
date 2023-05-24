@@ -319,7 +319,7 @@ class _CommentPageState extends State<CommentPage> {
                                                     .toShortTime(),
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .caption,
+                                                    .bodySmall,
                                               ),
                                             )
                                           ],
@@ -506,9 +506,8 @@ class _CommentPageState extends State<CommentPage> {
                                 Navigator.of(context).pop();
                                 Reporter.show(
                                     context,
-                                    () async => {
-                                          await muteStore.insertComment(comment)
-                                        });
+                                    () async =>
+                                        await muteStore.insertComment(comment));
                               },
                             ),
                             Container(

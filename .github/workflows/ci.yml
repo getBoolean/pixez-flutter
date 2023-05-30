@@ -79,3 +79,23 @@ jobs:
         with:
           name: android_apk
           path: build/app/outputs/flutter-apk/app-release.apk
+  
+  build_msix:
+      name: Build Flutter (Windows MSIX)
+      runs-on: windows-latest
+      steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v3
+        - name: Setup Flutter
+          uses: subosito/flutter-action@v2
+          with:
+            channel: "stable"
+        - run: flutter pub get
+        - run: dart run build_runner build --delete-conflicting-outputs
+        - name: Build Windows MSIX
+          run: dart run msix:create
+        - name: Upload msix
+          uses: actions/upload-artifact@v3
+          with:
+            name: windows_msix
+            path: build/windows/runner/Release/*.msix

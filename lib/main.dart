@@ -72,8 +72,6 @@ main(List<String> args) async {
   ));
 }
 
-const _brandBlue = Color(0xFF1E88E5);
-
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -160,6 +158,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   systemNavigationBarColor: Colors.transparent,
                   systemNavigationBarDividerColor: Colors.transparent,
                   statusBarColor: Colors.transparent,
+                  systemNavigationBarContrastEnforced: false,
+                  systemNavigationBarIconBrightness:
+                      Theme.of(context).brightness == Brightness.light
+                          ? Brightness.dark
+                          : Brightness.light,
                 ),
                 child: SplashPage());
           }),
@@ -178,7 +181,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   userSetting.isAMOLED ? Colors.black : null,
               colorScheme: darkColorScheme),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales, 
+          supportedLocales: AppLocalizations.supportedLocales,
         );
       });
     });

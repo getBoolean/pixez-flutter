@@ -35,8 +35,8 @@ class _SplashPageState extends State<SplashPage>
   @override
   void initState() {
     if (accountStore.now != null)
-      lightingStore = LightingStore(
-          ApiSource(futureGet: () => apiClient.getRecommend()));
+      lightingStore =
+          LightingStore(ApiSource(futureGet: () => apiClient.getRecommend()));
     controller =
         AnimationController(duration: Duration(seconds: 2), vsync: this);
     initMethod();
@@ -44,21 +44,33 @@ class _SplashPageState extends State<SplashPage>
     controller.forward();
   }
 
-  late ReactionDisposer reactionDisposer, userDisposer;
+  ReactionDisposer? reactionDisposer, userDisposer;
 
   bool isPush = false;
 
   initMethod() {
-    userDisposer = reaction((_) => userSetting.disableBypassSni, (_) {
-      if (userSetting.disableBypassSni) {
+    if (!userSetting.disableBypassSni) {
+      //ugly,consider refactor with other state management
+      userDisposer = reaction((_) => userSetting.disableBypassSni, (_) {
+        if (userSetting.disableBypassSni) {
+          apiClient.httpClient.options.baseUrl =
+              'https://${ApiClient.BASE_API_URL_HOST}';
+          oAuthClient.httpClient.options.baseUrl =
+              'https://${OAuthClient.BASE_OAUTH_URL_HOST}';
+          Leader.pushUntilHome(context);
+          isPush = true;
+        }
+      });
+    } else {
+      Future.delayed(Duration(microseconds: 100), () {
         apiClient.httpClient.options.baseUrl =
             'https://${ApiClient.BASE_API_URL_HOST}';
         oAuthClient.httpClient.options.baseUrl =
             'https://${OAuthClient.BASE_OAUTH_URL_HOST}';
         Leader.pushUntilHome(context);
         isPush = true;
-      }
-    });
+      });
+    }
     reactionDisposer = reaction((_) => splashStore.helloWord, (_) {
       if (mounted && !isPush) {
         Leader.pushUntilHome(context);
@@ -71,8 +83,8 @@ class _SplashPageState extends State<SplashPage>
   @override
   void dispose() {
     controller.dispose();
-    userDisposer();
-    reactionDisposer();
+    if (userDisposer != null) userDisposer!();
+    if (reactionDisposer != null) reactionDisposer!();
     super.dispose();
   }
 

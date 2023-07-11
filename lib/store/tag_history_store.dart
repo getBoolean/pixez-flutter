@@ -14,9 +14,16 @@
  *
  */
 
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:pixez/constants.dart';
+import 'package:pixez/models/export_tag_history_data.dart';
+import 'package:pixez/models/novel_recom_response.dart';
 import 'package:pixez/models/tags.dart';
+import 'package:pixez/saf_plugin.dart';
 
 part 'tag_history_store.g.dart';
 
@@ -59,5 +66,32 @@ abstract class _TagHistoryStoreBase with Store {
     await tagsPersistProvider.open();
     await tagsPersistProvider.deleteAll(type: Constants.type);
     await fetch();
+  }
+
+  final EXPORT_TYPE = "history_tags";
+
+  Future<void> importData() async {
+    final result = await SAFPlugin.openFile();
+    if (result == null) return;
+    final json = utf8.decode(result);
+    final decoder = JsonDecoder();
+    final map = decoder.convert(json);
+    final data = ExportData.fromJson(map);
+    if (data.tagHisotry == null) return;
+    final tagList = tags.map((element) => element.name);
+    data.tagHisotry!.removeWhere((element) => tagList.contains(element.name));
+    await tagsPersistProvider.open();
+    await tagsPersistProvider.insertAll(data.tagHisotry!.toList());
+    await fetch();
+  }
+
+  Future<void> exportData() async {
+    await tagsPersistProvider.open();
+    final uriStr =
+        await SAFPlugin.createFile("tag_history.json", "application/json");
+    if (uriStr == null) return;
+    final exportData = ExportData(tagHisotry: tags);
+    await SAFPlugin.writeUri(
+        uriStr, Uint8List.fromList(utf8.encode(jsonEncode(exportData))));
   }
 }

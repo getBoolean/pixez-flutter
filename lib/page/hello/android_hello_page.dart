@@ -159,6 +159,7 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
 
   Widget _buildPageContent(BuildContext context) {
     return PageView.builder(
+      physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return _pageList[index];
       },

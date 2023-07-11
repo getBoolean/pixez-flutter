@@ -48,15 +48,21 @@ import 'package:pixez/page/search/result_page.dart';
 import 'package:pixez/page/user/user_store.dart';
 import 'package:pixez/page/user/users_page.dart';
 import 'package:pixez/page/zoom/photo_zoom_page.dart';
+import 'package:pixez/supportor_plugin.dart';
 import 'package:share_plus/share_plus.dart';
 
 class IllustLightingPage extends StatefulWidget {
   final int id;
   final String? heroString;
   final IllustStore? store;
+  final GestureDragEndCallback? onHorizontalDragEnd;
 
   const IllustLightingPage(
-      {Key? key, required this.id, this.heroString, this.store})
+      {Key? key,
+      required this.id,
+      this.heroString,
+      this.store,
+      this.onHorizontalDragEnd})
       : super(key: key);
 
   @override
@@ -88,6 +94,7 @@ class _IllustLightingPageState extends State<IllustLightingPage> {
       id: widget.id,
       store: widget.store,
       heroString: widget.heroString,
+      onHorizontalDragEnd: widget.onHorizontalDragEnd,
     );
   }
 
@@ -96,6 +103,7 @@ class _IllustLightingPageState extends State<IllustLightingPage> {
       id: widget.id,
       store: widget.store,
       heroString: widget.heroString,
+      onHorizontalDragEnd: widget.onHorizontalDragEnd,
     );
   }
 }
@@ -104,9 +112,14 @@ class IllustVerticalPage extends StatefulWidget {
   final int id;
   final String? heroString;
   final IllustStore? store;
+  final GestureDragEndCallback? onHorizontalDragEnd;
 
   const IllustVerticalPage(
-      {Key? key, required this.id, this.heroString, this.store})
+      {Key? key,
+      required this.id,
+      this.heroString,
+      this.store,
+      this.onHorizontalDragEnd})
       : super(key: key);
 
   @override
@@ -133,6 +146,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
     _aboutStore =
         IllustAboutStore(widget.id, refreshController: _refreshController);
     super.initState();
+    supportTranslateCheck();
   }
 
   @override
@@ -229,6 +243,11 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
             onLongPress: () {
               _showBookMarkTag();
             },
+            onHorizontalDragEnd: (DragEndDetails detail) {
+              if (widget.onHorizontalDragEnd != null) {
+                widget.onHorizontalDragEnd!(detail);
+              }
+            },
             child: Observer(builder: (context) {
               return Visibility(
                 visible: _illustStore.errorMessage == null,
@@ -299,6 +318,46 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
           }),
         ),
       ),
+    );
+  }
+
+  bool supportTranslate = false;
+  String _selectedText = "";
+
+  Future<void> supportTranslateCheck() async {
+    if (!Platform.isAndroid) return;
+    bool results = await SupportorPlugin.processText();
+    if (mounted) {
+      setState(() {
+        supportTranslate = results;
+      });
+    }
+  }
+
+  AdaptiveTextSelectionToolbar _buildSelectionMenu(
+      SelectableRegionState editableTextState, BuildContext context) {
+    final List<ContextMenuButtonItem> buttonItems =
+        editableTextState.contextMenuButtonItems;
+    if (supportTranslate) {
+      buttonItems.insert(
+        buttonItems.length,
+        ContextMenuButtonItem(
+          label: I18n.of(context).translate,
+          onPressed: () async {
+            final selectionText = _selectedText;
+            if (Platform.isIOS) {
+              Share.share(selectionText);
+              return;
+            }
+            await SupportorPlugin.start(selectionText);
+            ContextMenuController.removeAny();
+          },
+        ),
+      );
+    }
+    return AdaptiveTextSelectionToolbar.buttonItems(
+      anchors: editableTextState.contextMenuAnchors,
+      buttonItems: buttonItems,
     );
   }
 
@@ -407,8 +466,13 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SelectionArea(
-                  selectionControls: TextSelectionFix.buildControls(context),
                   focusNode: _focusNode,
+                  onSelectionChanged: (value) {
+                    _selectedText = value?.plainText ?? "";
+                  },
+                  contextMenuBuilder: (context, selectableRegionState) {
+                    return _buildSelectionMenu(selectableRegionState, context);
+                  },
                   child: SelectableHtml(
                     data: data.caption.isEmpty ? "~" : data.caption,
                   ),

@@ -21,6 +21,16 @@ jobs:
           git fetch upstream
           git merge upstream/master
 
+      - name: Check for changes between branches
+        id: check_changes
+        run: |
+          changes=$(git diff main sync_pull_request)
+          if [ -z "$changes" ]; then
+            echo "No new changes found. Exiting..."
+            exit 1
+          fi
+        shell: bash
+
       - name: Push changes to the new branch
         run: |
           git push origin sync_pull_request

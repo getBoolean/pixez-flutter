@@ -35,7 +35,7 @@ jobs:
         shell: bash
 
       - name: Delete sync_pull_request branch if it exists
-        if: steps.check_branch.run == '0' # Only runs if the check_branch step succeeded
+        if: steps.check_branch.run == 0 # Only runs if the check_branch step succeeded
         run: |
           git branch -D sync_pull_request
 

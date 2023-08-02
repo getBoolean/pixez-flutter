@@ -79,3 +79,6 @@
 misc/
 msic
 macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Ignore Certificate
+*.pfx

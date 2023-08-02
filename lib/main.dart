@@ -26,7 +26,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:pixez/constants.dart';
 import 'package:pixez/er/fetcher.dart';
 import 'package:pixez/er/hoster.dart';
-import 'package:pixez/fluentui.dart';
+import 'package:pixez/fluent/fluentui.dart';
 import 'package:pixez/network/onezero_client.dart';
 import 'package:pixez/page/history/history_store.dart';
 import 'package:pixez/page/novel/history/novel_history_store.dart';
@@ -63,9 +63,7 @@ main(List<String> args) async {
   }
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    await initFluent(args);
-  }
+  await initFluent(args);
 
   runApp(ProviderScope(
     child: MyApp(),
@@ -138,24 +136,24 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final botToastBuilder = BotToastInit();
     return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-      ColorScheme lightColorScheme;
-      ColorScheme darkColorScheme;
-      if (userSetting.useDynamicColor &&
-          lightDynamic != null &&
-          darkDynamic != null) {
-        lightColorScheme = lightDynamic.harmonized();
-        darkColorScheme = darkDynamic.harmonized();
-      } else {
-        Color primary = userSetting.themeData.colorScheme.primary;
-        lightColorScheme = ColorScheme.fromSeed(
-          seedColor: primary,
-        );
-        darkColorScheme = ColorScheme.fromSeed(
-          seedColor: primary,
-          brightness: Brightness.dark,
-        );
-      }
-      return Observer(builder: (_) {
+      return Observer(builder: (context) {
+        ColorScheme lightColorScheme;
+        ColorScheme darkColorScheme;
+        if (userSetting.useDynamicColor &&
+            lightDynamic != null &&
+            darkDynamic != null) {
+          lightColorScheme = lightDynamic.harmonized();
+          darkColorScheme = darkDynamic.harmonized();
+        } else {
+          Color primary = userSetting.seedColor;
+          lightColorScheme = ColorScheme.fromSeed(
+            seedColor: primary,
+          );
+          darkColorScheme = ColorScheme.fromSeed(
+            seedColor: primary,
+            brightness: Brightness.dark,
+          );
+        }
         if (userSetting.themeInitState != 1) {
           return Container(
             child: Center(child: CircularProgressIndicator()),

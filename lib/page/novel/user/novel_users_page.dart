@@ -115,10 +115,18 @@ class _NovelUsersPageState extends State<NovelUsersPage>
           forceElevated: innerBoxIsScrolled ?? false,
           expandedHeight: 280,
           actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.share),
-                onPressed: () =>
-                    Share.share('https://www.pixiv.net/users/${widget.id}')),
+            Builder(builder: (context) {
+              return IconButton(
+                  icon: Icon(Icons.share),
+                  onPressed: () {
+                    final box = context.findRenderObject() as RenderBox?;
+                    final pos = box != null
+                        ? box.localToGlobal(Offset.zero) & box.size
+                        : null;
+                    Share.share('https://www.pixiv.net/users/${widget.id}',
+                        sharePositionOrigin: pos);
+                  });
+            }),
             _buildPopMenu(context)
           ],
           flexibleSpace: FlexibleSpaceBar(
@@ -442,9 +450,11 @@ class _NovelUsersPageState extends State<NovelUsersPage>
             children: <Widget>[
               NullHero(
                 tag: userStore.user?.name ?? "" + widget.heroTag.toString(),
-                child: Text(
-                  userStore.user?.name ?? "",
-                  style: Theme.of(context).textTheme.titleLarge,
+                child: SelectionArea(
+                  child: Text(
+                    userStore.user?.name ?? "",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                 ),
               ),
               InkWell(

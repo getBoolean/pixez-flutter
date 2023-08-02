@@ -14,13 +14,15 @@
  *
  */
 
+import 'dart:io';
+
 class Constants {
-  static String tagName = "0.9.25";
+  static String tagName = "0.9.26";
   static const isGooglePlay =
       bool.fromEnvironment("IS_GOOGLEPLAY", defaultValue: false);
   static int type = 0;
   static String? code_verifier = null;
 
-  /// 为true表示使用FluentUI 否则为false。可以用来判断是否是Desktop平台
-  static bool isFluent = false;
+  /// 为true表示使用FluentUI 否则为false,不应作为Desktop的判断
+  static bool isFluent = Platform.isWindows;
 }

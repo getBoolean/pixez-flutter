@@ -26,18 +26,12 @@ jobs:
         run: |
           if git show-ref --quiet refs/heads/sync_pull_request; then
             echo "sync_pull_request branch exists"
-            exit 0
+            git branch -D sync_pull_request
           else
             echo "sync_pull_request branch does not exist"
-            exit 1
           fi
         continue-on-error: true
         shell: bash
-
-      - name: Delete sync_pull_request branch if it exists
-        if: steps.check_branch.run == 0 # Only runs if the check_branch step succeeded
-        run: |
-          git branch -D sync_pull_request
 
       - name: Create a new branch and pull changes from upstream
         run: |

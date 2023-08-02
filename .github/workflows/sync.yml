@@ -19,7 +19,7 @@ jobs:
           git checkout -b sync_pull_request
           git remote add upstream https://github.com/Notsfsssf/pixez-flutter.git
           git fetch upstream
-          git merge upstream/master
+          git merge upstream/master --allow-unrelated-histories
 
       - name: Check for changes between branches
         id: check_changes

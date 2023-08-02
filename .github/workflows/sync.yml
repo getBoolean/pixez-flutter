@@ -21,12 +21,27 @@ jobs:
           git checkout main
           git pull
 
-      - name: Create a new branch and pull changes from upstream
+      - name: Check if sync_pull_request branch exists
+        id: check_branch
+        run: |
+          if git show-ref --quiet refs/heads/sync_pull_request; then
+            echo "sync_pull_request branch exists"
+          else
+            echo "sync_pull_request branch does not exist"
+          fi
+        continue-on-error: true
+        shell: bash
+
+      - name: Delete sync_pull_request branch if it exists
+        if: steps.check_branch.outcome == 'success' # Only runs if the check_branch step succeeded
         run: |
           git branch -D sync_pull_request
+
+      - name: Create a new branch and pull changes from upstream
+        run: |
           git fetch upstream
-          git checkout -b sync_pull_request main
-          git merge upstream/master
+          git checkout -b sync_pull_request upstream/main
+          git merge upstream/main
 
       - name: Check for changes between branches
         id: check_changes

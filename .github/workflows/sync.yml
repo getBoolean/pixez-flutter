@@ -6,7 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  daily_pull:
+  sync_pull_request:
+    name: Sync Pull Request
     runs-on: ubuntu-latest
 
     steps:

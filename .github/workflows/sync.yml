@@ -40,8 +40,8 @@ jobs:
       - name: Create a new branch and pull changes from upstream
         run: |
           git fetch upstream
-          git checkout -b sync_pull_request upstream/main
-          git merge upstream/main
+          git checkout -b sync_pull_request main
+          git merge upstream/master
 
       - name: Check for changes between branches
         id: check_changes

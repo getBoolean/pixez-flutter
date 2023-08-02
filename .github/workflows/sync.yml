@@ -23,9 +23,9 @@ jobs:
 
       - name: Create a new branch and pull changes from upstream
         run: |
-          git checkout -b sync_pull_request main
-          git remote add upstream https://github.com/Notsfsssf/pixez-flutter.git
+          git branch -D sync_pull_request
           git fetch upstream
+          git checkout -b sync_pull_request main
           git merge upstream/master
 
       - name: Check for changes between branches

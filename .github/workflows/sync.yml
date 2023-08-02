@@ -33,14 +33,12 @@ jobs:
         continue-on-error: true
         shell: bash
 
-      - name: Add upstream remote
-        run: git remote add upstream https://github.com/Notsfsssf/pixez-flutter.git
-
-      - name: Create a new branch and pull changes from upstream
-        run: |
-          git fetch upstream
-          git checkout -b sync_pull_request main
-          git merge upstream/master
+      - name: Merge upstream/master into sync_pull_request
+        uses: exions/merge-upstream@v1
+        with:
+          upstream: Notsfsssf/pixez-flutter
+          upstream-branch: master
+          branch: sync_pull_request
 
       - name: Check for changes between branches
         id: check_changes

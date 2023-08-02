@@ -23,8 +23,16 @@ jobs:
       run: |
         git push origin sync_pull_request
 
-    - name: Create pull request
-      uses: peter-evans/create-pull-request@v3
+    - name: Check existing pull requests
+      id: check_pr
+      run: |
+        pr=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls?head=getBoolean:sync_pull_request" | jq -r '.[0].state')
+        echo "::set-output name=pull_request_state::$pr"
+      shell: bash
+
+    - name: Create pull request if not exists or closed
+      if: steps.check_pr.outputs.pull_request_state == 'closed' || steps.check_pr.outputs.pull_request_state == 'null'
+      uses: peter-evans/create-pull-request@v5
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: 'Merge changes from upstream'

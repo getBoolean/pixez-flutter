@@ -40,7 +40,7 @@ jobs:
         run: |
           git fetch upstream
           git checkout -b sync_pull_request main
-          git rebase upstream/master
+          git merge upstream/master
 
       - name: Check for changes between branches
         id: check_changes

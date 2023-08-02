@@ -33,6 +33,9 @@ jobs:
         continue-on-error: true
         shell: bash
 
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/Notsfsssf/pixez-flutter.git
+
       - name: Create a new branch and pull changes from upstream
         run: |
           git fetch upstream

@@ -34,11 +34,13 @@ jobs:
         shell: bash
 
       - name: Merge upstream/master into sync_pull_request
-        uses: exions/merge-upstream@v1
+        uses: discdiver/merge-from-upstream-repo@v0.0.9
         with:
           upstream: Notsfsssf/pixez-flutter
           upstream-branch: master
           branch: sync_pull_request
+          useremail: Sync Pull Request Action
+          username: \<\>
 
       - name: Check for changes between branches
         id: check_changes

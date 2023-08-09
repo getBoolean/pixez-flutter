@@ -1,4 +1,4 @@
-name: Sync Main
+name: Sync Pull Request
 
 on:
   schedule:

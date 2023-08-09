@@ -24,19 +24,19 @@ jobs:
           git checkout sync_upstream
           git pull
 
-      - name: Check if sync_upstream branch exists
-        id: check_branch
-        run: |
-          if git show-ref --quiet refs/heads/sync_upstream; then
-            echo "sync_upstream branch exists"
-            git branch -D sync_upstream
-            git branch sync_upstream
-          else
-            echo "sync_upstream branch does not exist"
-            git branch sync_upstream
-          fi
-        continue-on-error: true
-        shell: bash
+      # - name: Check if sync_upstream branch exists
+      #   id: check_branch
+      #   run: |
+      #     if git show-ref --quiet refs/heads/sync_upstream; then
+      #       echo "sync_upstream branch exists"
+      #       git branch -D sync_upstream
+      #       git branch sync_upstream
+      #     else
+      #       echo "sync_upstream branch does not exist"
+      #       git branch sync_upstream
+      #     fi
+      #   continue-on-error: true
+      #   shell: bash
 
       - name: Merge upstream/master into sync_upstream
         uses: discdiver/merge-from-upstream-repo@v0.0.9

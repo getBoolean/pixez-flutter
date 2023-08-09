@@ -13,25 +13,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ref: sync_pull_request
+          fetch-depth: 0
 
       - name: Set up Git committer identity
         run: |
           git config --global user.name "Sync Pull Request Action"
           git config --global user.email \<\>
-          git checkout main
+          git checkout sync_pull_request
           git pull
-
-      - name: Check if sync_pull_request branch exists
-        id: check_branch
-        run: |
-          if git show-ref --quiet refs/heads/sync_pull_request; then
-            echo "sync_pull_request branch exists"
-            git branch -D sync_pull_request
-          else
-            echo "sync_pull_request branch does not exist"
-          fi
-        continue-on-error: true
-        shell: bash
 
       - name: Merge upstream/master into sync_pull_request
         uses: discdiver/merge-from-upstream-repo@v0.0.9

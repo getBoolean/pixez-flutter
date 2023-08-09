@@ -39,8 +39,8 @@ jobs:
           upstream: Notsfsssf/pixez-flutter
           upstream-branch: master
           branch: sync_pull_request
-          useremail: Sync Pull Request Action
-          username: \<\>
+          useremail: \<\>
+          username: Sync Pull Request Action
 
       - name: Check for changes between branches
         id: check_changes

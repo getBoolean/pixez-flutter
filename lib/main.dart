@@ -32,6 +32,7 @@ import 'package:pixez/page/history/history_store.dart';
 import 'package:pixez/page/novel/history/novel_history_store.dart';
 import 'package:pixez/page/splash/splash_page.dart';
 import 'package:pixez/page/splash/splash_store.dart';
+import 'package:pixez/single_instance_plugin.dart';
 import 'package:pixez/store/account_store.dart';
 import 'package:pixez/store/book_tag_store.dart';
 import 'package:pixez/store/mute_store.dart';
@@ -62,15 +63,19 @@ main(List<String> args) async {
     databaseFactory = databaseFactoryFfi;
   }
   WidgetsFlutterBinding.ensureInitialized();
+  SingleInstancePlugin.initialize();
 
   await initFluent(args);
 
   runApp(ProviderScope(
-    child: MyApp(),
+    child: MyApp(arguments: args),
   ));
 }
 
 class MyApp extends StatefulWidget {
+  final List<String> arguments;
+
+  const MyApp({super.key, required this.arguments});
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -117,6 +122,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     fetcher.start();
     super.initState();
     if (Platform.isIOS) WidgetsBinding.instance.addObserver(this);
+
+    Future.delayed(Duration.zero, () {
+      SingleInstancePlugin.argsParser(widget.arguments);
+    });
   }
 
   @override

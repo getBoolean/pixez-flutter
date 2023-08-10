@@ -65,7 +65,7 @@ jobs:
 
       - name: Push changes to the new branch
         run: |
-          git push origin sync_upstream
+          git push --set-upstream origin sync_upstream
 
       - name: Check existing pull requests
         id: check_pr

@@ -1,0 +1,102 @@
+name: CI
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_ios_without_signing:
+    name: Build Flutter (iOS) Without Signing
+    runs-on: macos-12
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      # Zip into IPA from here:
+      # https://gist.github.com/devhammed/617d920b7ee886591a46c22633ab0093
+      - name: Build Flutter IPA
+        run: |
+          flutter build ios --release --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r app-release.ipa Payload
+      - name: Upload IPA
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios_ipa
+          path: build/ios/iphoneos/*.ipa
+
+  build_appbundle:
+    name: Build Flutter (Android Appbundle)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+      - run: flutter clean
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - name: Build Android AppBundle
+        run: flutter build appbundle --release
+      - name: Upload appbundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: android_appbundle
+          path: build/app/outputs/bundle/release/app-release.aab
+
+  build_apk:
+    name: Build Flutter (Android APK)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+      - run: flutter clean
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - name: Build Android APK
+        run: flutter build apk --release
+      - name: Upload apk
+        uses: actions/upload-artifact@v3
+        with:
+          name: android_apk
+          path: build/app/outputs/flutter-apk/*.apk
+  
+  build_msix:
+      name: Build Flutter (Windows MSIX)
+      runs-on: windows-latest
+      steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v3
+        - name: Setup Flutter
+          uses: subosito/flutter-action@v2
+          with:
+            channel: "stable"
+        - run: flutter clean
+        - run: flutter pub get
+        - run: dart run build_runner build --delete-conflicting-outputs
+        - name: Build Windows MSIX
+          run: dart run msix:create
+        - name: Upload msix
+          uses: actions/upload-artifact@v3
+          with:
+            name: windows_msix
+            path: build/windows/runner/Release/*.msix

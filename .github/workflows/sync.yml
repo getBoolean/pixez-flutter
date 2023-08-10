@@ -30,6 +30,7 @@ jobs:
             echo "sync_upstream branch exists"
           else
             echo "sync_upstream branch does not exist"
+            git pull
             git branch sync_upstream
             git push -u origin sync_upstream
           fi

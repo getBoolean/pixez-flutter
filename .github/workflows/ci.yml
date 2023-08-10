@@ -3,12 +3,10 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
-      - release
+      - main
   pull_request:
     branches:
-      - master
-      - release
+      - main
 
 jobs:
   build_ios_without_signing:

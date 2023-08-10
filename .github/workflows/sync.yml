@@ -49,6 +49,7 @@ jobs:
           branch: sync_upstream
           useremail: \<\>
           username: Sync Pull Request Action
+          token: ${{ secrets.PAT }}
 
       # - name: Check for changes between branches
       #   id: check_changes

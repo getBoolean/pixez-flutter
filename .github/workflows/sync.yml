@@ -20,7 +20,7 @@ jobs:
         run: |
           git config --global user.name "Sync Upstream Action"
           git config --global user.email \<\>
-          git checkout sync_upstream
+          git checkout main
           git pull
 
       - name: Check if sync_upstream branch exists
@@ -67,9 +67,9 @@ jobs:
           echo "pull_request_state=$pr" >> $GITHUB_ENV
         shell: bash
 
-      - uses: actions/checkout@v3
-        with:
-          ref: main
+      - name: Checkout main
+        run: |
+          git checkout main
 
       - name: Reset upstream_sync branch
         run: |

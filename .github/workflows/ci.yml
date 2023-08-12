@@ -85,7 +85,7 @@ jobs:
 
   build_msix:
     name: Build Flutter (Windows MSIX)
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3

@@ -83,25 +83,37 @@ jobs:
           name: android_apk
           path: build/app/outputs/flutter-apk/*.apk
 
-  build_msix:
-    name: Build Flutter (Windows MSIX)
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Setup SQLite environment
-        uses: ccorsi/setup-sqlite@v1.0.1
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: "stable"
-      - run: flutter clean
-      - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
-      - name: Build Windows MSIX
-        run: dart run msix:create
-      - name: Upload msix
-        uses: actions/upload-artifact@v3
-        with:
-          name: windows_msix
-          path: build/windows/runner/Release/*.msix
+  # build_msix:
+  #   name: Build Flutter (Windows MSIX)
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3
+  #     # - name: Setup SQLite environment
+  #       # uses: ccorsi/setup-sqlite@v1.0.1
+  #       # run: |
+  #       #   $url = "https://www.sqlite.org/2023/sqlite-dll-win64-x64-3420000.zip"
+  #       #   $zip = "$env:TEMP\sqlite-dll-win64-x64-3420000.zip"
+  #       #   $dest = "$env:TEMP\sqlite-dll-win64-x64-3420000"
+  #       #   Invoke-WebRequest -Uri $url -OutFile $zip
+  #       #   Expand-Archive -Path $zip -DestinationPath $dest
+  #       #   echo "SQLITE3=$dest\sqlite3.dll" >> $env:GITHUB_ENV
+  #     - name: Check SQLite environment
+  #       run: |
+  #         echo $env:SQLITE3
+  #     - name: Setup Flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: "stable"
+  #     - run: flutter clean
+  #     - run: flutter pub get
+  #     - run: dart run build_runner build --delete-conflicting-outputs
+  #     - name: Build Windows
+  #       run: flutter build windows --release
+  #     - name: Package as Windows MSIX
+  #       run: dart run msix:create
+  #     - name: Upload msix
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: windows_msix
+  #         path: build/windows/runner/Release/*.msix

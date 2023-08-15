@@ -28,6 +28,9 @@ jobs:
         run: |
           if git show-ref --quiet refs/heads/sync_upstream; then
             echo "sync_upstream branch exists"
+            git branch -D sync_upstream
+            git branch sync_upstream
+            git push -u origin sync_upstream
           else
             echo "sync_upstream branch does not exist"
             git pull

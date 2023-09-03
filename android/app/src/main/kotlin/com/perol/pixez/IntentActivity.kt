@@ -21,25 +21,31 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
+import io.flutter.Log
 
 class IntentActivity : FragmentActivity() {
+    private var textView: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val textView = TextView(this@IntentActivity)
+        textView = TextView(this@IntentActivity)
         setContentView(FrameLayout(this).apply {
             addView(textView)
         })
-        val iid = intent.getLongExtra("iid", 0)
-        textView.text= iid.toString()
-        if (iid == 0L)
-            startActivity(Intent(this, MainActivity::class.java))
-        else {
-            val uri: Uri = Uri.parse("pixez://www.pixiv.net/artworks/$iid")
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(intent)
-            finish()
+        parseIntent(intent)
+    }
+
+    private fun parseIntent(intent: Intent?) {
+        val iid = intent?.getLongExtra("iid", 0)
+        Log.d("IntentActivity", "Card app widget:${iid}")
+        val targetIntent = Intent(this, MainActivity::class.java)
+        if (iid != 0L) {
+            textView?.text = iid.toString()
+            targetIntent.action = Intent.ACTION_VIEW
+            val uri = Uri.parse("pixez://www.pixiv.net/artworks/$iid")
+            targetIntent.data = uri
         }
+        startActivity(targetIntent)
+        finish()
     }
 }

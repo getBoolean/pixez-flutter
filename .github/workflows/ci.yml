@@ -6,6 +6,10 @@ on:
       - main
       - sync_upstream
       - v*
+  pull_request:
+    branches:
+      - main
+      - sync_upstream
 
 jobs:
   build_ios_without_signing:

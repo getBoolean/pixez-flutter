@@ -49,14 +49,14 @@ class MainFlutterWindow: NSWindow, FlutterStreamHandler {
         }
 
         let uniLinksChannel = FlutterMethodChannel(
-            name: "uni_links/messages",
+            name: "deep_links/messages",
             binaryMessenger: flutterViewController.engine.binaryMessenger)
         uniLinksChannel.setMethodCallHandler { call, result in
             if call.method == "getInitialLink" {
                 result(nil)
             }
         }
-        let eventChannel = FlutterEventChannel(name: "uni_links/events", binaryMessenger: flutterViewController.engine.binaryMessenger)
+        let eventChannel = FlutterEventChannel(name: "deep_links/events", binaryMessenger: flutterViewController.engine.binaryMessenger)
         eventChannel.setStreamHandler(self)
 
         DocumentPlugin.bind(controller: flutterViewController)

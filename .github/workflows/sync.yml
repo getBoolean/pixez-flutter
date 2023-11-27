@@ -20,6 +20,7 @@ jobs:
         run: |
           git config --global user.name "Sync Upstream Action"
           git config --global user.email \<\>
+          git config --global push.autoSetupRemote true
           git checkout main
           git pull
 
@@ -31,7 +32,7 @@ jobs:
           else
             echo "sync_upstream branch does not exist"
             git branch sync_upstream
-            git push -f -u origin sync_upstream
+            git push
           fi
         continue-on-error: true
         shell: bash
@@ -58,7 +59,7 @@ jobs:
 
       - name: Push changes to the new branch
         run: |
-          git push --set-upstream origin sync_upstream
+          git push
 
       - name: Check existing pull requests
         id: check_pr

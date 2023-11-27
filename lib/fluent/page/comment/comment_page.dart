@@ -19,8 +19,8 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:pixez/component/comment_emoji_text.dart';
+import 'package:pixez/component/pixez_default_header.dart';
 import 'package:pixez/fluent/component/painter_avatar.dart';
-import 'package:pixez/fluent/component/pixez_default_header.dart';
 import 'package:pixez/fluent/component/pixiv_image.dart';
 import 'package:pixez/er/leader.dart';
 import 'package:pixez/exts.dart';
@@ -421,6 +421,7 @@ class _CommentPageState extends State<CommentPage> {
   }
 
   Widget _buildTrailingRow(Comment comment, BuildContext context) {
+    FlyoutController controller = FlyoutController();
     return Row(
       children: [
         IconButton(
@@ -438,44 +439,36 @@ class _CommentPageState extends State<CommentPage> {
         if (!widget.isReplay)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: IconButton(
-                onPressed: () {
-                  showBottomSheet(
-                      context: context,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
+            child: FlyoutTarget(
+              controller: controller,
+              child: IconButton(
+                onPressed: () => controller.showFlyout(
+                  placementMode: FlyoutPlacementMode.bottomCenter,
+                  builder: (context) => MenuFlyout(
+                    items: [
+                      MenuFlyoutItem(
+                        text: Text(I18n.of(context).ban),
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          await muteStore.insertComment(comment);
+                        },
                       ),
-                      builder: (context) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ListTile(
-                              title: Text(I18n.of(context).ban),
-                              onPressed: () async {
-                                Navigator.of(context).pop();
-                                await muteStore.insertComment(comment);
-                              },
-                            ),
-                            ListTile(
-                              title: Text(I18n.of(context).report),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                Reporter.show(
-                                    context,
-                                    () async =>
-                                        await muteStore.insertComment(comment));
-                              },
-                            ),
-                            Container(
-                              height: MediaQuery.of(context).padding.bottom,
-                            )
-                          ],
-                        );
-                      });
-                },
-                icon: Icon(FluentIcons.more)),
+                      MenuFlyoutItem(
+                        text: Text(I18n.of(context).report),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Reporter.show(
+                            context,
+                            () async => await muteStore.insertComment(comment),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                icon: Icon(FluentIcons.more),
+              ),
+            ),
           )
       ],
     );

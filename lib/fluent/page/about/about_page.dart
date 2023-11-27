@@ -122,15 +122,12 @@ class _AboutPageState extends State<AboutPage> {
             title: Text('Perol_Notsfsssf'),
             subtitle: Text(I18n.of(context).perol_message),
             onPressed: () {
-              showBottomSheet(
+              showDialog(
                 context: context,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(16),
-                  ),
-                ),
-                builder: (BuildContext context) {
-                  return IconButton(
+                barrierDismissible: true,
+                builder: (context) => Padding(
+                  padding: EdgeInsets.all(128),
+                  child: IconButton(
                     onPressed: () async {
                       if (Platform.isAndroid)
                         await launchUrl(Uri.parse(Constants.isGooglePlay
@@ -143,8 +140,8 @@ class _AboutPageState extends State<AboutPage> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                  );
-                },
+                  ),
+                ),
               );
             },
           ),
@@ -155,16 +152,15 @@ class _AboutPageState extends State<AboutPage> {
             title: Text('Right now'),
             subtitle: Text(I18n.of(context).right_now_message),
             onPressed: () {
-              showBottomSheet(
+              showDialog(
                 context: context,
-                builder: (BuildContext context) {
-                  return Container(
-                    height: 200.0,
-                    child: Center(
-                      child: Text("这里空空的，这个设计师显然没有什么话要说"),
-                    ),
-                  );
-                },
+                barrierDismissible: true,
+                builder: (context) => Container(
+                  height: 200.0,
+                  child: Center(
+                    child: Text("这里空空的，这个设计师显然没有什么话要说"),
+                  ),
+                ),
               );
             },
           ),
@@ -254,11 +250,8 @@ class _AboutPageState extends State<AboutPage> {
               ),
               onPressed: () {
                 if (!Constants.isGooglePlay)
-                  showBottomSheet(
+                  showDialog(
                       context: context,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(16.0))),
                       builder: (_) {
                         return SafeArea(
                           child: Column(

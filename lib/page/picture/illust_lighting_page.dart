@@ -26,6 +26,7 @@ import 'package:pixez/component/ban_page.dart';
 import 'package:pixez/component/common_back_area.dart';
 import 'package:pixez/component/null_hero.dart';
 import 'package:pixez/component/painter_avatar.dart';
+import 'package:pixez/component/pixez_default_header.dart';
 import 'package:pixez/component/pixiv_image.dart';
 import 'package:pixez/component/selectable_html.dart';
 import 'package:pixez/component/star_icon.dart';
@@ -250,10 +251,16 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                 visible: _illustStore.errorMessage == null,
                 child: FloatingActionButton(
                   heroTag: widget.id,
-                  onPressed: () => _illustStore.star(
-                      restrict: userSetting.defaultPrivateLike
-                          ? "private"
-                          : "public"),
+                  onPressed: () {
+                    if (userSetting.saveAfterStar &&
+                        (_illustStore.state == 0)) {
+                      saveStore.saveImage(_illustStore.illusts!);
+                    }
+                    _illustStore.star(
+                        restrict: userSetting.defaultPrivateLike
+                            ? "private"
+                            : "public");
+                  },
                   child: Observer(builder: (_) {
                     return StarIcon(
                       state: _illustStore.state,
@@ -385,6 +392,8 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
       );
     return EasyRefresh(
       controller: _refreshController,
+      header: PixezDefault.header(context),
+      footer: PixezDefault.footer(context),
       onLoad: () {
         _aboutStore.next();
       },
@@ -551,6 +560,13 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                         return;
                       }
                     }
+                    if (userSetting.starAfterSave &&
+                        (_illustStore.state == 0)) {
+                      _illustStore.star(
+                          restrict: userSetting.defaultPrivateLike
+                              ? "private"
+                              : "public");
+                    }
                     saveStore.saveImage(_aboutStore.illusts[index]);
                   },
                   child: PixivImage(
@@ -607,6 +623,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                         PhotoZoomPage(
                           index: 0,
                           illusts: data,
+                          illustStore: _illustStore,
                         ));
                   },
                   child: NullHero(
@@ -640,6 +657,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                           PhotoZoomPage(
                             index: index,
                             illusts: data,
+                            illustStore: _illustStore,
                           ));
                     },
                     child: _buildIllustsItem(index, data, height));
@@ -958,6 +976,13 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                   onTap: () async {
                     Navigator.of(context).pop();
                     saveStore.saveImage(illust, index: index);
+                    if (userSetting.starAfterSave &&
+                        (_illustStore.state == 0)) {
+                      _illustStore.star(
+                          restrict: userSetting.defaultPrivateLike
+                              ? "private"
+                              : "public");
+                    }
                   },
                   onLongPress: () async {
                     Navigator.of(context).pop();
@@ -1020,7 +1045,10 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                                 Leader.push(
                                     context,
                                     PhotoZoomPage(
-                                        index: index, illusts: illust));
+                                      index: index,
+                                      illusts: illust,
+                                      illustStore: _illustStore,
+                                    ));
                               },
                               child: Stack(
                                 children: [
@@ -1071,6 +1099,13 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                       title: Text(I18n.of(context).save),
                       onTap: () {
                         Navigator.of(context).pop("OK");
+                        if (userSetting.starAfterSave &&
+                            (_illustStore.state == 0)) {
+                          _illustStore.star(
+                              restrict: userSetting.defaultPrivateLike
+                                  ? "private"
+                                  : "public");
+                        }
                       },
                     ),
                   ],
@@ -1239,6 +1274,9 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
       LPrinter.d(result);
       String restrict = result['restrict'];
       List<String>? tags = result['tags'];
+      if (userSetting.saveAfterStar && (_illustStore.state == 0)) {
+        saveStore.saveImage(_illustStore.illusts!);
+      }
       _illustStore.star(restrict: restrict, tags: tags, force: true);
     }
   }

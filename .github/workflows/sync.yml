@@ -36,10 +36,6 @@ jobs:
         continue-on-error: true
         shell: bash
 
-      - name: Checkout sync_upstream
-        run: |
-          git checkout sync_upstream
-
       - name: Merge upstream/master into sync_upstream
         uses: discdiver/merge-from-upstream-repo@v0.0.9
         with:

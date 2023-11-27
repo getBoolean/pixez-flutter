@@ -17,7 +17,25 @@ final bool _safeMode = Platform.isIOS || Constants.isGooglePlay;
 
 get _showBottomSheet {
   if (Constants.isFluent)
-    return fluentui.showBottomSheet;
+    return ({
+      required BuildContext context,
+      required WidgetBuilder builder,
+      Color? backgroundColor,
+      double? elevation,
+      ShapeBorder? shape,
+      Clip? clipBehavior,
+      BoxConstraints? constraints,
+      bool? enableDrag,
+      AnimationController? transitionAnimationController,
+    }) =>
+        fluentui.showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (context) => Padding(
+            padding: EdgeInsets.all(128),
+            child: builder(context),
+          ),
+        );
   else
     return material.showBottomSheet;
 }

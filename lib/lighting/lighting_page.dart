@@ -151,6 +151,7 @@ class _LightingListState extends State<LightingList> {
         child: EasyRefresh.builder(
           controller: _refreshController,
           header: PixezDefault.header(context),
+          footer: PixezDefault.footer(context),
           scrollController: _scrollController,
           onRefresh: () {
             _store.fetch(force: true);
@@ -245,9 +246,8 @@ class _LightingListState extends State<LightingList> {
         controller: _refreshController,
         scrollController: _scrollController,
         header: PixezDefault.header(context),
-        footer: ClassicFooter(
-          position: IndicatorPosition.locator,
-        ),
+        footer:
+            PixezDefault.footer(context, position: IndicatorPosition.locator),
         onRefresh: () {
           _store.fetch(force: true);
         },

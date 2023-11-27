@@ -359,7 +359,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
                     data: Theme.of(context).copyWith(
                         tabBarTheme: TabBarTheme(labelColor: Colors.black)),
                     child: TabBar(
-                      labelColor: Theme.of(context).textTheme.headline6!.color,
+                      labelColor: Theme.of(context).textTheme.titleLarge!.color,
                       indicatorSize: TabBarIndicatorSize.label,
                       dividerColor: Colors.transparent,
                       tabs: tablist,
@@ -432,7 +432,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
                   Icon(Icons.stay_primary_landscape),
                   Observer(builder: (_) {
                     return TabBar(
-                      labelColor: Theme.of(context).textTheme.headline6!.color,
+                      labelColor: Theme.of(context).textTheme.titleLarge!.color,
                       indicatorSize: TabBarIndicatorSize.label,
                       dividerColor: Colors.transparent,
                       tabs: [
@@ -614,6 +614,38 @@ class _SettingQualityPageState extends State<SettingQualityPage>
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
+              child: Observer(
+                builder: (_) {
+                  return SwitchListTile(
+                    value: userSetting.saveAfterStar,
+                    title: Text('收藏并自动下载'),
+                    onChanged: (value) async {
+                      userSetting.setSaveAfterStar(value);
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Observer(
+                builder: (_) {
+                  return SwitchListTile(
+                    value: userSetting.starAfterSave,
+                    title: Text("下载后自动收藏"),
+                    onChanged: (value) async {
+                      userSetting.setStarAfterSave(value);
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                 child: Observer(
@@ -686,8 +718,7 @@ class _SettingQualityPageState extends State<SettingQualityPage>
   }
 
   void _buildLanguageTranlators() {
-    final langsponsors =
-        Languages[userSetting.languageNum].sponsors;
+    final langsponsors = Languages[userSetting.languageNum].sponsors;
     _languageTranlator = Row(
       children: [
         for (final langsponsor in langsponsors)

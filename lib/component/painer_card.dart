@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:pixez/component/painter_avatar.dart';
 import 'package:pixez/component/pixiv_image.dart';
+import 'package:pixez/exts.dart';
 import 'package:pixez/models/user_preview.dart';
 import 'package:pixez/page/novel/user/novel_users_page.dart';
 import 'package:pixez/page/user/user_store.dart';
@@ -104,8 +105,15 @@ class PainterCard extends StatelessWidget {
                 SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
             delegate: SliverChildBuilderDelegate((context, index) {
               if (index >= user.illusts.length) return Container();
+              var currentIllust = user.illusts[index];
+              if (currentIllust.hIsNotAllow()) {
+                return Container(
+                  color: Colors.white,
+                  child: Image.asset('assets/images/h.jpg'),
+                );
+              }
               return PixivImage(
-                user.illusts[index].imageUrls.squareMedium,
+                currentIllust.imageUrls.squareMedium,
                 fit: BoxFit.cover,
               );
             }, childCount: user.illusts.length));

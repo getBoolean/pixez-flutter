@@ -75,7 +75,7 @@ jobs:
 
       - name: Reset sync_upstream branch
         run: |
-          git fetch origin sync_upstream:sync_upstream
+          git fetch origin sync_upstream:sync_upstream --depth=0
           git reset --hard sync_upstream
 
       - name: Create pull request if not exists or closed

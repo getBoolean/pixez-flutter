@@ -39,13 +39,13 @@ jobs:
         shell: bash
 
       - name: Merge upstream/master into sync_upstream
-        uses: discdiver/merge-from-upstream-repo@v0.0.9
+        uses: exions/merge-upstream@v1
         with:
-          upstream: Notsfsssf/pixez-flutter
-          upstream-branch: master
+          upstream: ${{ github.event.inputs.upstream }}
+          upstream-branch: ${{ github.event.inputs.upstream-branch }}
           branch: sync_upstream
-          useremail: \<\>
-          username: Sync Pull Request Action
+          #useremail: \<\>
+          #username: Sync Pull Request Action
           token: ${{ secrets.PAT }}
 
       # - name: Check for changes between branches

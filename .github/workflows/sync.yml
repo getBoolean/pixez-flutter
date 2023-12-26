@@ -34,6 +34,7 @@ jobs:
             git branch sync_upstream
             git push
           fi
+          git pull
         continue-on-error: true
         shell: bash
 

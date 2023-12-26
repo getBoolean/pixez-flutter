@@ -39,14 +39,15 @@ jobs:
         shell: bash
 
       - name: Merge upstream/master into sync_upstream
-        uses: exions/merge-upstream@v1
-        with:
-          upstream: Notsfsssf/pixez-flutter
-          upstream-branch: master
-          branch: sync_upstream
-          #useremail: \<\>
-          #username: Sync Pull Request Action
-          token: ${{ secrets.PAT }}
+        run: | 
+          git remote add -f upstream "https://github.com/Notsfsssf/pixez-flutter.git"
+          git remote -v
+          git branch --all
+          git config --list
+          git checkout sync_upstream
+          git merge upstream/master
+          git push 
+        shell: bash
 
       # - name: Check for changes between branches
       #   id: check_changes

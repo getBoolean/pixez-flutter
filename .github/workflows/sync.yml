@@ -41,8 +41,8 @@ jobs:
       - name: Merge upstream/master into sync_upstream
         uses: exions/merge-upstream@v1
         with:
-          upstream: ${{ github.event.inputs.upstream }}
-          upstream-branch: ${{ github.event.inputs.upstream-branch }}
+          upstream: Notsfsssf/pixez-flutter
+          upstream-branch: master
           branch: sync_upstream
           #useremail: \<\>
           #username: Sync Pull Request Action

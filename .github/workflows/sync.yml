@@ -45,7 +45,7 @@ jobs:
           git branch --all
           git config --list
           git checkout sync_upstream
-          git --allow-unrelated-histories merge upstream/master
+          git merge --allow-unrelated-histories upstream/master
           git push 
         shell: bash
 

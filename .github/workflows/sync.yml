@@ -32,7 +32,7 @@ jobs:
           else
             echo "sync_upstream branch does not exist"
             git branch sync_upstream
-            git push
+            git push origin sync_upstream
           fi
           git pull
         continue-on-error: true
@@ -47,7 +47,7 @@ jobs:
           git checkout sync_upstream
           git pull origin sync_upstream
           git merge --allow-unrelated-histories upstream/master
-          git push 
+          git push origin sync_upstream
         shell: bash
 
       # - name: Check for changes between branches

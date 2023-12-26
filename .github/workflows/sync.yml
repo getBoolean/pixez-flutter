@@ -45,6 +45,7 @@ jobs:
           git branch --all
           git config --list
           git checkout sync_upstream
+          git config pull.ff only
           git pull origin sync_upstream
           git merge --allow-unrelated-histories upstream/master
           git push origin sync_upstream

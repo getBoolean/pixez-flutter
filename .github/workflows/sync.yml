@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          token: ${{ secrets.PAT }}
 
       - name: Set up Git committer identity
         run: |
@@ -65,9 +66,9 @@ jobs:
       #     fi
       #   shell: bash
 
-      - name: Push changes to the new branch
-        run: |
-          git push
+      # - name: Push changes to the new branch
+      #   run: |
+      #     git push
 
       - name: Check existing pull requests
         id: check_pr
@@ -87,6 +88,8 @@ jobs:
           git reset --hard sync_upstream
 
       - name: Create pull request if not exists or closed
+        env:
+          pull_request_state: ${{ steps.check_pr.outputs.pull_request_state }}
         if: env.pull_request_state == 'closed' || env.pull_request_state == 'null'
         uses: peter-evans/create-pull-request@v5
         with:

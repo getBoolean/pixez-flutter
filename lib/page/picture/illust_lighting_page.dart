@@ -381,7 +381,8 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
     return SelectionArea(
       child: Text(
         text,
-        style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary, fontSize: 12),
       ),
     );
   }
@@ -413,186 +414,24 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                 child: Container(height: MediaQuery.of(context).padding.top)),
           ..._buildPhotoList(data),
           SliverToBoxAdapter(
+            child: _buildInfoArea(data, context),
+          ),
+          SliverToBoxAdapter(
             child: _buildNameAvatar(context, data),
           ),
           SliverToBoxAdapter(
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SelectionArea(
-                    child: Text(
-                      data.title,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Container(child: Text(I18n.of(context).illust_id)),
-                      Container(
-                        width: 10.0,
-                      ),
-                      colorText(data.id.toString(), context),
-                      Container(
-                        width: 20.0,
-                      ),
-                      Container(child: Text(I18n.of(context).pixel)),
-                      Container(
-                        width: 10.0,
-                      ),
-                      colorText("${data.width}x${data.height}", context)
-                    ],
-                  ),
-                  Container(
-                    height: 4,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Icon(
-                        Icons.remove_red_eye,
-                        color: Theme.of(context).textTheme.bodySmall!.color,
-                        size: 16,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 2.0),
-                        child: Text(data.totalView.toString(),
-                            style: Theme.of(context).textTheme.bodySmall),
-                      ),
-                      Container(
-                        width: 4.0,
-                      ),
-                      Icon(
-                        Icons.favorite,
-                        color: Theme.of(context).textTheme.bodySmall!.color,
-                        size: 16.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 2.0),
-                        child: Text("${data.totalBookmarks}",
-                            style: Theme.of(context).textTheme.bodySmall),
-                      ),
-                      Container(
-                        width: 4.0,
-                      ),
-                      Icon(
-                        Icons.timelapse_rounded,
-                        color: Theme.of(context).textTheme.bodySmall!.color,
-                        size: 16.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 2.0),
-                        child: Text(data.createDate.toShortTime(),
-                            style: Theme.of(context).textTheme.bodySmall),
-                      )
-                    ],
-                  ),
-                ],
-              ),
+            child: _buildTagArea(data, context),
+          ),
+          if (!data.caption.isEmpty)
+            SliverToBoxAdapter(
+              child: _buildCaptionArea(data),
             ),
+          SliverToBoxAdapter(
+            child: _buildCommentTextArea(context, data),
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 12,
-                runSpacing: 6,
-                children: [
-                  if (data.illustAIType == 2)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(8)),
-                      ),
-                      child: RichText(
-                          textAlign: TextAlign.start,
-                          text: TextSpan(
-                              text: "${I18n.of(context).ai_generated}",
-                              children: [
-                                TextSpan(
-                                  text: " ",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 12),
-                                ),
-                              ],
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall!
-                                  .copyWith(
-                                      color: Colors.white, fontSize: 12))),
-                    ),
-                  for (var f in data.tags) buildRow(context, f)
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
-                child: SelectionArea(
-                  focusNode: _focusNode,
-                  onSelectionChanged: (value) {
-                    _selectedText = value?.plainText ?? "";
-                  },
-                  contextMenuBuilder: (context, selectableRegionState) {
-                    return _buildSelectionMenu(selectableRegionState, context);
-                  },
-                  child: SelectableHtml(
-                    data: data.caption.isEmpty ? "~" : data.caption,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 0.0),
-              child: SelectionContainer.disabled(
-                child: TextButton(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Icon(
-                          Icons.comment,
-                          size: 16,
-                        ),
-                      ),
-                      Text(
-                        I18n.of(context).view_comment,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => CommentPage(
-                              id: data.id,
-                            )));
-                  },
-                ),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(I18n.of(context).about_picture),
             ),
           ),
@@ -657,6 +496,204 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
               }, childCount: _aboutStore.illusts.length),
               gridDelegate:
                   SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3))
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCommentTextArea(BuildContext context, Illusts data) {
+    return Padding(
+      padding:
+          const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 8.0),
+      child: SelectionContainer.disabled(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.comment,
+                size: 16, color: Theme.of(context).colorScheme.primary),
+            SizedBox(
+              width: 4,
+            ),
+            Text(
+              I18n.of(context).view_comment,
+              textAlign: TextAlign.center,
+              style:
+                  Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 14),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container _buildCaptionArea(Illusts data) {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+        child: SelectionArea(
+          focusNode: _focusNode,
+          onSelectionChanged: (value) {
+            _selectedText = value?.plainText ?? "";
+          },
+          contextMenuBuilder: (context, selectableRegionState) {
+            return _buildSelectionMenu(selectableRegionState, context);
+          },
+          child: SelectableHtml(
+            data: data.caption.isEmpty ? "~" : data.caption,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Padding _buildTagArea(Illusts data, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0),
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 6,
+        runSpacing: 6,
+        children: [
+          if (data.illustAIType == 2)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+              ),
+              child: RichText(
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                      text: "${I18n.of(context).ai_generated}",
+                      children: [
+                        TextSpan(
+                          text: " ",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall!
+                              .copyWith(fontSize: 12),
+                        ),
+                      ],
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleSmall!
+                          .copyWith(color: Colors.white, fontSize: 12))),
+            ),
+          for (var f in data.tags) buildRow(context, f)
+        ],
+      ),
+    );
+  }
+
+  Container _buildInfoArea(Illusts data, BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 8.0,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: SelectionArea(
+              child: Text(
+                data.title,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontSize: 18),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 8.0,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Icon(
+                Icons.remove_red_eye,
+                color: Theme.of(context).textTheme.bodySmall!.color,
+                size: 12,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 2.0),
+                child: Text(
+                  data.totalView.toString(),
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurface),
+                ),
+              ),
+              Container(
+                width: 4.0,
+              ),
+              Icon(
+                Icons.favorite,
+                color: Theme.of(context).textTheme.bodySmall!.color,
+                size: 12.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 2.0),
+                child: Text("${data.totalBookmarks}",
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurface)),
+              ),
+              Container(
+                width: 4.0,
+              ),
+              Icon(
+                Icons.timelapse_rounded,
+                color: Theme.of(context).textTheme.bodySmall!.color,
+                size: 12.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 2.0),
+                child: Text(data.createDate.toShortTime(),
+                    style: Theme.of(context).textTheme.bodySmall),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                  child: Text(
+                I18n.of(context).illust_id,
+                style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurface),
+              )),
+              Container(
+                width: 4.0,
+              ),
+              colorText(data.id.toString(), context),
+              Container(
+                width: 10.0,
+              ),
+              Container(
+                  child: Text(
+                I18n.of(context).pixel,
+                style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurface),
+              )),
+              Container(
+                width: 4.0,
+              ),
+              colorText("${data.width}x${data.height}", context)
+            ],
+          ),
+          SizedBox(
+            height: 8,
+          ),
         ],
       ),
     );
@@ -931,7 +968,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                           .copyWith(fontSize: 12))
                 ],
                 style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.primary,
                     fontSize: 12))),
       ),
     );
@@ -1012,10 +1049,10 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                     ),
                   ),
                 ),
-                padding: EdgeInsets.all(8.0)),
+                padding: EdgeInsets.only(left: 16.0)),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(12.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -1026,6 +1063,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                         child: Text(
                           illust.user.name,
                           style: TextStyle(
+                              fontSize: 14,
                               color:
                                   Theme.of(context).textTheme.bodySmall!.color),
                         ),

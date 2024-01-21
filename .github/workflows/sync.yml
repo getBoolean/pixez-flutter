@@ -66,9 +66,9 @@ jobs:
       #     fi
       #   shell: bash
 
-      # - name: Push changes to the new branch
-      #   run: |
-      #     git push
+      - name: Push changes to the new branch
+        run: |
+          git push
 
       - name: Check existing pull requests
         id: check_pr

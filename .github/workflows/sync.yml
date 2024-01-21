@@ -28,7 +28,7 @@ jobs:
       - name: Check if sync_upstream branch exists
         id: check_branch
         run: |
-          if git show-ref --quiet refs/heads/sync_upstream; then
+          if git ls-remote --heads origin refs/heads/sync_upstream | wc -l; then
             echo "sync_upstream branch exists"
           else
             echo "sync_upstream branch does not exist"

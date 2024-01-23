@@ -2,7 +2,16 @@ name: CI
 on:
   workflow_dispatch:
   push:
+    branches:
+      - '**'
+      - '!gh-pages'
+    tags:
+      - 'v*'
   pull_request:
+
+env:
+  FLUTTER_CHANNEL: "stable"
+  FLUTTER_VERSION: "any"
 
 jobs:
   build_ios_without_signing:
@@ -10,13 +19,27 @@ jobs:
     runs-on: macos-12
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Setup Flutter
+        uses: actions/checkout@v4
+
+      - name: Install and Setup Flutter version
         uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
-      - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
+          channel: ${{env.FLUTTER_CHANNEL}}
+          flutter-version: ${{env.FLUTTER_VERSION}}
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+          architecture: x64
+
+      - name: Check Flutter Version
+        run: flutter --version
+
+      - name: Get Packages
+        run: flutter pub get
+
+      - name: Generate Code
+        run: dart run build_runner build --delete-conflicting-outputs
+
       # Zip into IPA from here:
       # https://gist.github.com/devhammed/617d920b7ee886591a46c22633ab0093
       - name: Build Flutter IPA
@@ -28,11 +51,20 @@ jobs:
           ln -s ../Runner.app
           cd ..
           zip -r app-release.ipa Payload
+          mv app-release.ipa pixez-${{ github.ref_name }}-ios.ipa
+
       - name: Upload IPA
         uses: actions/upload-artifact@v3
         with:
-          name: ios_ipa
-          path: build/ios/iphoneos/*.ipa
+          name: pixez-${{ github.ref_name }}-ios
+          path: build/ios/iphoneos/pixez-*.ipa
+
+      - name: Release IPA
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/ios/iphoneos/pixez-*.ipa
+          allowUpdates: true
 
   build_appbundle:
     name: Build Flutter (Android Appbundle)
@@ -40,20 +72,45 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Setup Flutter
+
+      - name: Install and set Flutter version
         uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
-      - run: flutter clean
-      - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
-      - name: Build Android AppBundle
-        run: flutter build appbundle --release
-      - name: Upload appbundle
+          channel: ${{env.FLUTTER_CHANNEL}}
+          flutter-version: ${{env.FLUTTER_VERSION}}
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+          architecture: x64
+
+      - name: Check Flutter Version
+        run: flutter --version
+
+      - name: Get Packages
+        run: flutter pub get
+
+      - name: Generate Code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build AppBundle
+        run: |
+          flutter pub get
+          flutter build appbundle --release
+          cd build/app/outputs/bundle/release
+          mv app-release.aab pixez-${{ github.ref_name }}-android-appbundle.aab
+
+      - name: Upload Appbundle
         uses: actions/upload-artifact@v3
         with:
-          name: android_appbundle
-          path: build/app/outputs/bundle/release/app-release.aab
+          name: pixez-${{ github.ref_name }}-android-appbundle
+          path: build/app/outputs/bundle/release/*.aab
+          
+      - name: Release Appbundle
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/app/outputs/bundle/release/pixez-*.aab
+          allowUpdates: true
 
   build_apk:
     name: Build Flutter (Android APK)
@@ -61,20 +118,67 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Setup Flutter
+
+      - name: Install and set Flutter version
         uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
-      - run: flutter clean
-      - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
-      - name: Build Android APK
-        run: flutter build apk --release
-      - name: Upload apk
+          channel: ${{env.FLUTTER_CHANNEL}}
+          flutter-version: ${{env.FLUTTER_VERSION}}
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+          architecture: x64
+
+      - name: Check Flutter Version
+        run: flutter --version
+
+      - name: Get Packages
+        run: flutter pub get
+
+      - name: Generate Code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Android Split Apk
+        run: |
+          flutter pub get
+          flutter build apk --release --split-per-abi
+          cd build/app/outputs/flutter-apk
+          mv app-arm64-v8a-release.apk pixez-${{ github.ref_name }}-android-arm64-v8a.apk
+          mv app-armeabi-v7a-release.apk pixez-${{ github.ref_name }}-android-armeabi-v7a.apk
+          mv app-x86_64-release.apk pixez-${{ github.ref_name }}-android-x86_64.apk
+
+      - name: Upload Split APKs
         uses: actions/upload-artifact@v3
         with:
-          name: android_apk
-          path: build/app/outputs/flutter-apk/*.apk
+          name: pixez-${{ github.ref_name }}-android-split
+          path: build/app/outputs/flutter-apk/pixez-*.apk
+
+      - name: Release Split Apks
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/app/outputs/flutter-apk/pixez-*.apk
+          allowUpdates: true
+
+      - name: Build Universal Apk
+        run: |
+          flutter pub get
+          flutter build apk --release
+          cd build/app/outputs/flutter-apk
+          mv app-release.apk pixez-${{ github.ref_name }}-android-universal.apk
+
+      - name: Upload Universal APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: pixez-${{ github.ref_name }}-android-universal
+          path: build/app/outputs/flutter-apk/pixez-${{ github.ref_name }}-android-universal.apk
+
+      - name: Release Universal Apks
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/app/outputs/flutter-apk/pixez-${{ github.ref_name }}-android-universal.apk
+          allowUpdates: true
 
   # build_msix:
   #   name: Build Flutter (Windows MSIX)

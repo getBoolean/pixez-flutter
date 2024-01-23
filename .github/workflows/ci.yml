@@ -7,7 +7,6 @@ on:
       - '!gh-pages'
     tags:
       - 'v*'
-  pull_request:
 
 env:
   FLUTTER_CHANNEL: "stable"

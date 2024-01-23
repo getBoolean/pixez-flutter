@@ -15,7 +15,7 @@ env:
 
 jobs:
   build_ios_without_signing:
-    name: Build Flutter (iOS) Without Signing
+    name: Build Flutter for iOS (Without Signing)
     runs-on: macos-12
     steps:
       - name: Checkout Repository
@@ -66,54 +66,8 @@ jobs:
           artifacts: build/ios/iphoneos/pixez-*.ipa
           allowUpdates: true
 
-  build_appbundle:
-    name: Build Flutter (Android Appbundle)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Install and set Flutter version
-        uses: subosito/flutter-action@v2
-        with:
-          channel: ${{env.FLUTTER_CHANNEL}}
-          flutter-version: ${{env.FLUTTER_VERSION}}
-          cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-          architecture: x64
-
-      - name: Check Flutter Version
-        run: flutter --version
-
-      - name: Get Packages
-        run: flutter pub get
-
-      - name: Generate Code
-        run: dart run build_runner build --delete-conflicting-outputs
-
-      - name: Build AppBundle
-        run: |
-          flutter pub get
-          flutter build appbundle --release
-          cd build/app/outputs/bundle/release
-          mv app-release.aab pixez-${{ github.ref_name }}-android-appbundle.aab
-
-      - name: Upload Appbundle
-        uses: actions/upload-artifact@v3
-        with:
-          name: pixez-${{ github.ref_name }}-android-appbundle
-          path: build/app/outputs/bundle/release/*.aab
-          
-      - name: Release Appbundle
-        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: build/app/outputs/bundle/release/pixez-*.aab
-          allowUpdates: true
-
-  build_apk:
-    name: Build Flutter (Android APK)
+  build_android:
+    name: Build Flutter for Android
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -178,6 +132,26 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: build/app/outputs/flutter-apk/pixez-${{ github.ref_name }}-android-universal.apk
+          allowUpdates: true
+
+      - name: Build AppBundle
+        run: |
+          flutter pub get
+          flutter build appbundle --release
+          cd build/app/outputs/bundle/release
+          mv app-release.aab pixez-${{ github.ref_name }}-android-appbundle.aab
+
+      - name: Upload Appbundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: pixez-${{ github.ref_name }}-android-appbundle
+          path: build/app/outputs/bundle/release/*.aab
+          
+      - name: Release Appbundle
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/app/outputs/bundle/release/pixez-*.aab
           allowUpdates: true
 
   # build_msix:

@@ -138,7 +138,7 @@ jobs:
       - name: Generate Code
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Build Android Split Apk
+      - name: Build Android Split APK
         run: |
           flutter pub get
           flutter build apk --release --split-per-abi
@@ -153,14 +153,14 @@ jobs:
           name: pixez-${{ github.ref_name }}-android-split
           path: build/app/outputs/flutter-apk/pixez-*.apk
 
-      - name: Release Split Apks
+      - name: Release Split APKs
         if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
         uses: ncipollo/release-action@v1
         with:
           artifacts: build/app/outputs/flutter-apk/pixez-*.apk
           allowUpdates: true
 
-      - name: Build Universal Apk
+      - name: Build Universal APK
         run: |
           flutter pub get
           flutter build apk --release
@@ -173,7 +173,7 @@ jobs:
           name: pixez-${{ github.ref_name }}-android-universal
           path: build/app/outputs/flutter-apk/pixez-${{ github.ref_name }}-android-universal.apk
 
-      - name: Release Universal Apks
+      - name: Release Universal APKs
         if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
         uses: ncipollo/release-action@v1
         with:

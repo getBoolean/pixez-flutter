@@ -39,6 +39,7 @@ import 'package:pixez/page/saucenao/saucenao_page.dart';
 import 'package:pixez/page/search/search_page.dart';
 import 'package:pixez/page/search/suggest/search_suggestion_page.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AndroidHelloPage extends StatefulWidget {
@@ -61,38 +62,19 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        userSetting.setAnimContainer(!userSetting.animContainer);
-        if (!userSetting.isReturnAgainToExit) {
-          return true;
-        }
-        if (_preTime == null ||
-            DateTime.now().difference(_preTime!) > Duration(seconds: 2)) {
-          _preTime = DateTime.now();
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            duration: Duration(seconds: 1),
-            content: Text(I18n.of(context).return_again_to_exit),
-          ));
-          return false;
-        }
-        return true;
-      },
-      child: Observer(builder: (context) {
-        if (accountStore.now != null &&
-            (Platform.isIOS || Platform.isAndroid)) {
-          return _buildScaffold(context);
-        }
-        if (accountStore.now == null && accountStore.feching) {
-          return Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-        return LoginPage();
-      }),
-    );
+    return Observer(builder: (context) {
+      if (accountStore.now != null && (Platform.isIOS || Platform.isAndroid)) {
+        return _buildScaffold(context);
+      }
+      if (accountStore.now == null && accountStore.feching) {
+        return Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+      return LoginPage();
+    });
   }
 
   Widget _buildScaffold(BuildContext context) {
@@ -101,24 +83,46 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
     }
     return LayoutBuilder(builder: (context, constraints) {
       final wide = constraints.maxWidth > constraints.maxHeight;
-      return Scaffold(
-          body: Row(children: [
-            if (wide) ..._buildRail(context),
-            Expanded(child: _buildPageView(context))
-          ]),
-          extendBody: true,
-          bottomNavigationBar: wide
-              ? null
-              : ValueListenableBuilder<bool>(
-                  valueListenable: isFullscreen,
-                  builder: (BuildContext context, bool isFullscreen,
-                          Widget? child) =>
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 400),
-                        transform: Matrix4.translationValues(
-                            0, isFullscreen ? bottomNavigatorHeight! : 0, 0),
-                        child: _buildNavigationBar(context),
-                      )));
+      return PopScope(
+        onPopInvoked: (didPop) async {
+          userSetting.setAnimContainer(!userSetting.animContainer);
+          if (didPop) return;
+          if (!userSetting.isReturnAgainToExit) {
+            return;
+          }
+          if (_preTime == null ||
+              DateTime.now().difference(_preTime!) > Duration(seconds: 2)) {
+            setState(() {
+              _preTime = DateTime.now();
+            });
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              duration: Duration(seconds: 1),
+              content: Text(I18n.of(context).return_again_to_exit),
+            ));
+          }
+        },
+        canPop: !userSetting.isReturnAgainToExit ||
+            _preTime != null &&
+                DateTime.now().difference(_preTime!) <= Duration(seconds: 2),
+        child: Scaffold(
+            body: Row(children: [
+              if (wide) ..._buildRail(context),
+              Expanded(child: _buildPageView(context))
+            ]),
+            extendBody: true,
+            bottomNavigationBar: wide
+                ? null
+                : ValueListenableBuilder<bool>(
+                    valueListenable: isFullscreen,
+                    builder: (BuildContext context, bool isFullscreen,
+                            Widget? child) =>
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 400),
+                          transform: Matrix4.translationValues(
+                              0, isFullscreen ? bottomNavigatorHeight! : 0, 0),
+                          child: _buildNavigationBar(context),
+                        ))),
+      );
     });
   }
 
@@ -253,7 +257,6 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
   late int index;
   late PageController _pageController;
   late StreamSubscription _intentDataStreamSubscription;
-  late StreamSubscription _textStreamSubscription;
   bool hasNewVersion = false;
 
   @override
@@ -278,32 +281,37 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
       saveStore.listenBehavior(stream);
     });
     initPlatformState();
-    _textStreamSubscription =
-        ReceiveSharingIntent.getTextStream().listen((value) {
-      _showChromeLink(value);
-    });
-    ReceiveSharingIntent.getInitialText().then((value) {
-      if (value != null) {
-        _showChromeLink(value);
-      }
-    });
     _intentDataStreamSubscription = ReceiveSharingIntent.getMediaStream()
         .listen((List<SharedMediaFile> value) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return SauceNaoPage(
-          path: value.first.path,
-        );
-      }));
+      for (var i in value) {
+        if (i.type == SharedMediaType.text) {
+          _showChromeLink(i.path);
+          continue;
+        }
+        if (i.type == SharedMediaType.image) {
+          Leader.push(
+              context,
+              SauceNaoPage(
+                path: i.path,
+              ));
+        }
+      }
     }, onError: (err) {
       print("getIntentDataStream error: $err");
     });
     ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
-      if (value.isNotEmpty) {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return SauceNaoPage(
-            path: value.first.path,
-          );
-        }));
+      for (var i in value) {
+        if (i.type == SharedMediaType.text) {
+          _showChromeLink(i.path);
+          continue;
+        }
+        if (i.type == SharedMediaType.image) {
+          Leader.push(
+              context,
+              SauceNaoPage(
+                path: i.path,
+              ));
+        }
       }
     });
     initPlatform();
@@ -431,7 +439,6 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
   @override
   void dispose() {
     _intentDataStreamSubscription.cancel();
-    _textStreamSubscription.cancel();
     _pageController.dispose();
     _sub.cancel();
     super.dispose();

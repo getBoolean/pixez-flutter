@@ -57,12 +57,10 @@ class _SelectableHtmlState extends State<SelectableHtml> {
         onTapUrl: (String url) async {
           try {
             LPrinter.d("html tap url: $url");
-            if (url.startsWith("pixiv")) {
-              Leader.pushWithUri(context, Uri.parse(url));
-            } else {
-              final result = await launchUrl(Uri.parse(url),
+            bool result = await Leader.pushWithUri(context, Uri.parse(url));
+            if (!result) {
+              await launchUrl(Uri.parse(url),
                   mode: LaunchMode.inAppWebView);
-              LPrinter.d("html tap url result: ${result.toString()}");
             }
           } catch (e) {
             Share.share(url);

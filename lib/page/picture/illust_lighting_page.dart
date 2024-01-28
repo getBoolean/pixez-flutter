@@ -431,7 +431,8 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding:
+                  const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 4.0),
               child: Text(I18n.of(context).about_picture),
             ),
           ),
@@ -505,43 +506,55 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
     return Padding(
       padding:
           const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 8.0),
-      child: SelectionContainer.disabled(
+      child: InkWell(
+        onTap: () {
+          Leader.push(context, CommentPage(id: data.id));
+        },
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.comment,
-                size: 16, color: Theme.of(context).colorScheme.primary),
-            SizedBox(
-              width: 4,
-            ),
-            Text(
-              I18n.of(context).view_comment,
-              textAlign: TextAlign.center,
-              style:
-                  Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 14),
-            ),
-          ],
-        ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.comment,
+                size: 16,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              SizedBox(
+                width: 4,
+              ),
+              Text(
+                I18n.of(context).view_comment,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            ]),
       ),
     );
   }
 
   Container _buildCaptionArea(Illusts data) {
     return Container(
+      margin: EdgeInsets.only(top: 4),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-        child: SelectionArea(
-          focusNode: _focusNode,
-          onSelectionChanged: (value) {
-            _selectedText = value?.plainText ?? "";
-          },
-          contextMenuBuilder: (context, selectableRegionState) {
-            return _buildSelectionMenu(selectableRegionState, context);
-          },
-          child: SelectableHtml(
-            data: data.caption.isEmpty ? "~" : data.caption,
+        padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 14),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onInverseSurface,
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            child: SelectionArea(
+              focusNode: _focusNode,
+              onSelectionChanged: (value) {
+                _selectedText = value?.plainText ?? "";
+              },
+              contextMenuBuilder: (context, selectableRegionState) {
+                return _buildSelectionMenu(selectableRegionState, context);
+              },
+              child: SelectableHtml(
+                data: data.caption.isEmpty ? "~" : data.caption,
+              ),
+            ),
           ),
         ),
       ),
@@ -616,7 +629,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
             children: <Widget>[
               Icon(
                 Icons.remove_red_eye,
-                color: Theme.of(context).textTheme.bodySmall!.color,
+                color: Theme.of(context).colorScheme.onSurface,
                 size: 12,
               ),
               Padding(
@@ -633,7 +646,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
               ),
               Icon(
                 Icons.favorite,
-                color: Theme.of(context).textTheme.bodySmall!.color,
+                color: Theme.of(context).colorScheme.onSurface,
                 size: 12.0,
               ),
               Padding(
@@ -648,13 +661,15 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
               ),
               Icon(
                 Icons.timelapse_rounded,
-                color: Theme.of(context).textTheme.bodySmall!.color,
+                color: Theme.of(context).colorScheme.onSurface,
                 size: 12.0,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 2.0),
                 child: Text(data.createDate.toShortTime(),
-                    style: Theme.of(context).textTheme.bodySmall),
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurface)),
               )
             ],
           ),
@@ -884,7 +899,18 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            title: Text(f.name),
+            title: RichText(
+              text: TextSpan(children: [
+                TextSpan(
+                    text: "${f.name}",
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.primary)),
+                if (f.translatedName != null)
+                  TextSpan(
+                      text: "\n${"${f.translatedName}"}",
+                      style: Theme.of(context).textTheme.bodyLarge!)
+              ]),
+            ),
             children: <Widget>[
               SimpleDialogOption(
                 onPressed: () {
@@ -943,33 +969,42 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
         }));
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        height: 25,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: const BorderRadius.all(Radius.circular(12.5)),
         ),
-        child: RichText(
-            textAlign: TextAlign.start,
-            text: TextSpan(
-                text: "#${f.name}",
-                children: [
-                  TextSpan(
-                    text: " ",
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall!
-                        .copyWith(fontSize: 12),
-                  ),
-                  TextSpan(
-                      text: "${f.translatedName ?? "~"}",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleSmall!
-                          .copyWith(fontSize: 12))
-                ],
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 12))),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RichText(
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                text: TextSpan(
+                    text: "#${f.name}",
+                    children: [
+                      TextSpan(
+                        text: " ",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleSmall!
+                            .copyWith(fontSize: 12),
+                      ),
+                      if (f.translatedName != null)
+                        TextSpan(
+                            text: "${f.translatedName}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(fontSize: 12))
+                    ],
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 12))),
+          ],
+        ),
       ),
     );
   }

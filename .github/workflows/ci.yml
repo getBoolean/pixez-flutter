@@ -42,6 +42,7 @@ jobs:
       # https://gist.github.com/devhammed/617d920b7ee886591a46c22633ab0093
       - name: Build Flutter IPA
         run: |
+          cd ios && pod deintegrate && pod install && cd ..
           flutter build ios --release --no-codesign
           cd build/ios/iphoneos
           mkdir Payload

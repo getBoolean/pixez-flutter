@@ -15,7 +15,7 @@ env:
 jobs:
   build_ios_without_signing:
     name: Build Flutter for iOS (Without Signing)
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -28,7 +28,6 @@ jobs:
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
           cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-          architecture: x64
 
       - name: Check Flutter Version
         run: flutter --version
@@ -43,6 +42,7 @@ jobs:
       # https://gist.github.com/devhammed/617d920b7ee886591a46c22633ab0093
       - name: Build Flutter IPA
         run: |
+          cd ios && pod deintegrate && pod install && cd ..
           flutter build ios --release --no-codesign
           cd build/ios/iphoneos
           mkdir Payload
@@ -80,7 +80,6 @@ jobs:
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
           cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-          architecture: x64
 
       - name: Check Flutter Version
         run: flutter --version

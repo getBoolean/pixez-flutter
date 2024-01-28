@@ -284,8 +284,6 @@ class FluentLeader {
                 padding: EdgeInsets.all(0.0),
               );
 
-    // GROSS!!! YOU SHOULD NOT BE DOING THIS!!!
-    // THIS IS CAUSING THE USED AFTER DISPOSE EXCEPTION
     var state = context.findAncestorStateOfType<FluentHelloPageState>();
     if (state == null) state = FluentHelloPageState.state;
     assert(state != null);

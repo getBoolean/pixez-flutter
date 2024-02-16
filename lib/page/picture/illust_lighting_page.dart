@@ -45,6 +45,7 @@ import 'package:pixez/page/picture/illust_store.dart';
 import 'package:pixez/page/picture/picture_list_page.dart';
 import 'package:pixez/page/picture/tag_for_illust_page.dart';
 import 'package:pixez/page/picture/ugoira_loader.dart';
+import 'package:pixez/page/picture/user_follow_button.dart';
 import 'package:pixez/page/report/report_items_page.dart';
 import 'package:pixez/page/search/result_page.dart';
 import 'package:pixez/page/user/user_store.dart';
@@ -263,6 +264,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                     if (userSetting.followAfterStar) {
                       bool success = await _illustStore.followAfterStar();
                       if (success) {
+                        userStore?.isFollow = true;
                         BotToast.showText(
                             text:
                                 "${_illustStore.illusts!.user.name} ${I18n.of(context).followed}");
@@ -1016,72 +1018,33 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
       Future.delayed(Duration(seconds: 2), () {
         _loadAbout();
       });
-      return InkWell(
+      return GestureDetector(
         onTap: () async {
-          await Leader.push(
-              context,
-              UsersPage(
-                id: illust.user.id,
-                userStore: userStore,
-                heroTag: this.hashCode.toString(),
-              ));
-          _illustStore.illusts!.user.isFollowed = userStore!.isFollow;
-        },
-        onLongPress: () {
-          userStore!.follow();
+          await _push2UserPage(context, illust);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
-                child: GestureDetector(
-                  onLongPress: () {
-                    userStore!.follow();
-                  },
-                  child: Container(
-                    height: 32,
-                    width: 32,
-                    child: Stack(
-                      children: <Widget>[
-                        Center(
-                          child: SizedBox(
-                            height: 32,
-                            width: 32,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: userStore!.isFollow
-                                    ? Colors.yellow
-                                    : Theme.of(context).colorScheme.secondary,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Center(
-                          child: Hero(
-                            tag: illust.user.profileImageUrls.medium +
-                                this.hashCode.toString(),
-                            child: PainterAvatar(
-                              url: illust.user.profileImageUrls.medium,
-                              id: illust.user.id,
-                              size: Size(28, 28),
-                              onTap: () async {
-                                await Leader.push(
-                                    context,
-                                    UsersPage(
-                                      id: illust.user.id,
-                                      userStore: userStore,
-                                      heroTag: this.hashCode.toString(),
-                                    ));
-                                _illustStore.illusts!.user.isFollowed =
-                                    userStore!.isFollow;
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                child: Hero(
+                  tag: illust.user.profileImageUrls.medium +
+                      this.hashCode.toString(),
+                  child: PainterAvatar(
+                    url: illust.user.profileImageUrls.medium,
+                    id: illust.user.id,
+                    size: Size(32, 32),
+                    onTap: () async {
+                      await Leader.push(
+                          context,
+                          UsersPage(
+                            id: illust.user.id,
+                            userStore: userStore,
+                            heroTag: this.hashCode.toString(),
+                          ));
+                      _illustStore.illusts!.user.isFollowed =
+                          userStore!.isFollow;
+                    },
                   ),
                 ),
                 padding: EdgeInsets.only(left: 16.0)),
@@ -1108,10 +1071,33 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
                 ),
               ),
             ),
+            UserFollowButton(
+              followed: userStore?.isFollow ?? illust.user.isFollowed ?? false,
+              onPressed: () async {
+                await userStore?.follow();
+                if (userStore?.isFollow != null) {
+                  _illustStore.illusts?.user.isFollowed = userStore?.isFollow;
+                }
+              },
+            ),
+            SizedBox(
+              width: 12,
+            )
           ],
         ),
       );
     });
+  }
+
+  Future<void> _push2UserPage(BuildContext context, Illusts illust) async {
+    await Leader.push(
+        context,
+        UsersPage(
+          id: illust.user.id,
+          userStore: userStore,
+          heroTag: this.hashCode.toString(),
+        ));
+    _illustStore.illusts!.user.isFollowed = userStore!.isFollow;
   }
 
   Future<void> _pressSave(Illusts illust, int index) async {

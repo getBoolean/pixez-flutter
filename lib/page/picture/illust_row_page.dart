@@ -24,7 +24,6 @@ import 'package:pixez/component/common_back_area.dart';
 import 'package:pixez/component/null_hero.dart';
 import 'package:pixez/component/painter_avatar.dart';
 import 'package:pixez/component/pixiv_image.dart';
-import 'package:pixez/component/selectable_html.dart';
 import 'package:pixez/component/star_icon.dart';
 import 'package:pixez/er/leader.dart';
 import 'package:pixez/er/lprinter.dart';
@@ -34,8 +33,8 @@ import 'package:pixez/main.dart';
 import 'package:pixez/models/ban_illust_id.dart';
 import 'package:pixez/models/ban_tag.dart';
 import 'package:pixez/models/illust.dart';
-import 'package:pixez/page/comment/comment_page.dart';
 import 'package:pixez/page/picture/illust_about_store.dart';
+import 'package:pixez/page/picture/illust_detail_content.dart';
 import 'package:pixez/page/picture/illust_store.dart';
 import 'package:pixez/page/picture/picture_list_page.dart';
 import 'package:pixez/page/picture/tag_for_illust_page.dart';
@@ -99,9 +98,8 @@ class _IllustRowPageState extends State<IllustRowPage>
   void _loadAbout() {
     if (mounted &&
         _scrollController.hasClients &&
-        _scrollController.offset + 180 >=
-            _scrollController.position.maxScrollExtent &&
-        _aboutStore.illusts.isEmpty) _aboutStore.fetch();
+        _aboutStore.illusts.isEmpty &&
+        !_aboutStore.fetching) _aboutStore.fetch();
   }
 
   @override
@@ -269,6 +267,7 @@ class _IllustRowPageState extends State<IllustRowPage>
     final screenHeight = MediaQuery.of(context).size.height;
     final height = (radio * expectWidth);
     final centerType = height <= screenHeight;
+    if (userStore == null) userStore = UserStore(data.user.id, user: data.user);
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
@@ -304,115 +303,13 @@ class _IllustRowPageState extends State<IllustRowPage>
                               child: Container(
                                   height: MediaQuery.of(context).padding.top)),
                           SliverToBoxAdapter(
-                            child: _buildNameAvatar(context, data),
-                          ),
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(I18n.of(context).illust_id),
-                                      Container(
-                                        width: 10.0,
-                                      ),
-                                      colorText(data.id.toString(), context),
-                                      Container(
-                                        width: 20.0,
-                                      ),
-                                      Text(I18n.of(context).pixel),
-                                      Container(
-                                        width: 10.0,
-                                      ),
-                                      colorText("${data.width}x${data.height}",
-                                          context)
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(I18n.of(context).total_view),
-                                      Container(
-                                        width: 10.0,
-                                      ),
-                                      colorText(
-                                          data.totalView.toString(), context),
-                                      Container(
-                                        width: 20.0,
-                                      ),
-                                      Text(I18n.of(context).total_bookmark),
-                                      Container(
-                                        width: 10.0,
-                                      ),
-                                      colorText(
-                                          "${data.totalBookmarks}", context)
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                spacing: 2,
-                                runSpacing: 0,
-                                children: [
-                                  if (data.illustAIType == 2)
-                                    Text("${I18n.of(context).ai_generated}",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondary)),
-                                  for (var f in data.tags) buildRow(context, f)
-                                ],
-                              ),
-                            ),
-                          ),
-                          SliverToBoxAdapter(
-                            child: Card(
-                              child: SelectionArea(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: SelectableHtml(
-                                    data: data.caption.isEmpty
-                                        ? "~"
-                                        : data.caption,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TextButton(
-                                child: Text(
-                                  I18n.of(context).view_comment,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.bodyLarge!,
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          CommentPage(
-                                            id: data.id,
-                                          )));
-                                },
-                              ),
-                            ),
-                          ),
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(I18n.of(context).about_picture),
+                            child: IllustDetailContent(
+                              illusts: data,
+                              userStore: userStore,
+                              illustStore: _illustStore,
+                              loadAbout: () {
+                                _loadAbout();
+                              },
                             ),
                           ),
                           _buildRecom()

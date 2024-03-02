@@ -4,7 +4,7 @@
 
 [English README Here](./.github/README_en.md)
 
-Modified to remove jailbreak detection!!!!
+Modified to remove jailbreak detection.
 
 使用 Flutter 编写的 pixiv 第三方客户端。
 

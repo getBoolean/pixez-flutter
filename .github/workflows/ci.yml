@@ -64,6 +64,7 @@ jobs:
         with:
           artifacts: build/ios/iphoneos/pixez-*.ipa
           allowUpdates: true
+          omitBodyDuringUpdate: true
 
   build_android:
     name: Build Flutter for Android
@@ -111,6 +112,7 @@ jobs:
         with:
           artifacts: build/app/outputs/flutter-apk/pixez-*.apk
           allowUpdates: true
+          omitBodyDuringUpdate: true
 
       - name: Build Universal APK
         run: |
@@ -131,6 +133,7 @@ jobs:
         with:
           artifacts: build/app/outputs/flutter-apk/pixez-${{ github.ref_name }}-android-universal.apk
           allowUpdates: true
+          omitBodyDuringUpdate: true
 
       - name: Build Android App Bundle
         run: |
@@ -151,6 +154,7 @@ jobs:
         with:
           artifacts: build/app/outputs/bundle/release/pixez-*.aab
           allowUpdates: true
+          omitBodyDuringUpdate: true
 
   # build_msix:
   #   name: Build Flutter (Windows MSIX)

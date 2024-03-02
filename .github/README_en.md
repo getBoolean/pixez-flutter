@@ -4,7 +4,7 @@
 
 A 3rd-party pixiv client built with Flutter.
 
-Modified to remove jailbreak detection!!!!
+Modified to remove jailbreak detection.
 
 Can access pixiv directly from Mainland China.
 

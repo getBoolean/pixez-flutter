@@ -33,6 +33,7 @@ import 'package:pixez/main.dart';
 import 'package:pixez/models/ban_tag.dart';
 import 'package:pixez/models/novel_recom_response.dart';
 import 'package:pixez/models/novel_text_response.dart';
+import 'package:pixez/models/novel_web_response.dart';
 import 'package:pixez/page/comment/comment_page.dart';
 import 'package:pixez/page/novel/component/novel_bookmark_button.dart';
 import 'package:pixez/page/novel/search/novel_result_page.dart';
@@ -40,6 +41,7 @@ import 'package:pixez/page/novel/series/novel_series_page.dart';
 import 'package:pixez/page/novel/user/novel_users_page.dart';
 import 'package:pixez/page/novel/viewer/image_text.dart';
 import 'package:pixez/page/novel/viewer/novel_store.dart';
+import 'package:pixez/page/novel/viewer/novel_web_viewer.dart';
 import 'package:pixez/supportor_plugin.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path/path.dart' as Path;
@@ -167,7 +169,7 @@ class _NovelViewerPageState extends State<NovelViewerPage> {
                   },
                 ),
                 title: Text(
-                  _novelStore.novelTextResponse!.novelText.length.toString(),
+                  _novelStore.novelTextResponse!.text.length.toString(),
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 backgroundColor: Colors.transparent,
@@ -204,126 +206,18 @@ class _NovelViewerPageState extends State<NovelViewerPage> {
               ),
               extendBodyBehindAppBar: true,
               body: Scrollbar(
-                child: ListView(
+                child: SingleChildScrollView(
                   padding: EdgeInsets.all(0.0),
                   controller: _controller,
-                  children: <Widget>[
-                    Container(
-                      height: MediaQuery.of(context).padding.top + 100,
-                    ),
-                    Center(
-                        child: Container(
-                            height: 160,
-                            child: PixivImage(
-                                _novelStore.novel!.imageUrls.medium))),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16.0, right: 16.0, top: 12.0, bottom: 8.0),
-                      child: Text(
-                        "${_novelStore.novel!.title}",
-                        style: Theme.of(context).textTheme.titleMedium,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).padding.top,
                       ),
-                    ),
-                    if (_novelStore.novel?.series.id != null)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16.0, right: 16.0, top: 0.0, bottom: 0.0),
-                        child: InkWell(
-                          onTap: () {
-                            Leader.push(context,
-                                NovelSeriesPage(_novelStore.novel!.series.id!));
-                          },
-                          child: Text(
-                            "Series:${_novelStore.novel!.series.title}",
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                        ),
-                      ),
-                    //MARK DETAIL NUM,
-                    _buildNumItem(
-                        _novelStore.novelTextResponse!, _novelStore.novel!),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        "${_novelStore.novel!.createDate}",
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
-                        child: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: 2,
-                          runSpacing: 0,
-                          children: [
-                            if (_novelStore.novel!.NovelAIType == 2)
-                              Text("${I18n.of(context).ai_generated}",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary)),
-                            for (var f in _novelStore.novel!.tags)
-                              buildRow(context, f)
-                          ],
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SelectionArea(
-                            onSelectionChanged: (value) {
-                              _selectedText = value?.plainText ?? "";
-                            },
-                            contextMenuBuilder: (context, editableTextState) {
-                              return _buildSelectionMenu(
-                                  editableTextState, context);
-                            },
-                            child: SelectableHtml(
-                                data: _novelStore.novel?.caption ?? ""),
-                          ),
-                        ),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0)),
-                      ),
-                    ),
-                    TextButton(
-                        onPressed: () {
-                          Leader.push(
-                              context,
-                              CommentPage(
-                                id: _novelStore.id,
-                                type: CommentArtWorkType.NOVEL,
-                              ));
-                        },
-                        child: Text(I18n.of(context).view_comment)),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SelectionArea(
-                        onSelectionChanged: (value) {
-                          _selectedText = value?.plainText ?? "";
-                        },
-                        contextMenuBuilder: (context, editableTextState) {
-                          return _buildSelectionMenu(
-                              editableTextState, context);
-                        },
-                        child: Text.rich(
-                            TextSpan(text: '', style: _textStyle, children: [
-                          for (var span in _novelSpansGenerator.buildSpans(
-                              context,
-                              _novelStore.novelTextResponse!.novelText))
-                            span
-                        ])),
-                      ),
-                    ),
-                    Container(
-                      height: 10 + MediaQuery.of(context).padding.bottom,
-                    ),
-                  ],
+                      _buildHeader(context),
+                      _buildContentText(context)
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -341,6 +235,123 @@ class _NovelViewerPageState extends State<NovelViewerPage> {
           ),
         );
       },
+    );
+  }
+
+  Padding _buildContentText(BuildContext context) {
+    return Padding(
+      padding:
+          EdgeInsets.only(bottom: 10 + MediaQuery.of(context).padding.bottom),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SelectionArea(
+          onSelectionChanged: (value) {
+            _selectedText = value?.plainText ?? "";
+          },
+          contextMenuBuilder: (context, editableTextState) {
+            return _buildSelectionMenu(editableTextState, context);
+          },
+          child: Text.rich(
+            TextSpan(text: '', style: _textStyle, children: [
+              for (var span in _novelSpansGenerator.buildSpans(
+                  context, _novelStore.novelTextResponse!))
+                span
+            ]),
+            textHeightBehavior:
+                TextHeightBehavior(applyHeightToLastDescent: true),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          height: 100,
+        ),
+        Center(
+            child: Container(
+                height: 160,
+                child: PixivImage(_novelStore.novel!.imageUrls.medium))),
+        Padding(
+          padding: const EdgeInsets.only(
+              left: 16.0, right: 16.0, top: 12.0, bottom: 8.0),
+          child: Text(
+            "${_novelStore.novel!.title}",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+        if (_novelStore.novel?.series.id != null)
+          Padding(
+            padding: const EdgeInsets.only(
+                left: 16.0, right: 16.0, top: 0.0, bottom: 0.0),
+            child: InkWell(
+              onTap: () {
+                Leader.push(
+                    context, NovelSeriesPage(_novelStore.novel!.series.id!));
+              },
+              child: Text(
+                "Series:${_novelStore.novel!.series.title}",
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            ),
+          ),
+        //MARK DETAIL NUM,
+        _buildNumItem(_novelStore.novel!),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            "${_novelStore.novel!.createDate}",
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
+        ),
+        Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 2,
+              runSpacing: 0,
+              children: [
+                if (_novelStore.novel!.NovelAIType == 2)
+                  Text("${I18n.of(context).ai_generated}",
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.secondary)),
+                for (var f in _novelStore.novel!.tags) buildRow(context, f)
+              ],
+            )),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SelectionArea(
+                onSelectionChanged: (value) {
+                  _selectedText = value?.plainText ?? "";
+                },
+                contextMenuBuilder: (context, editableTextState) {
+                  return _buildSelectionMenu(editableTextState, context);
+                },
+                child: SelectableHtml(data: _novelStore.novel?.caption ?? ""),
+              ),
+            ),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)),
+          ),
+        ),
+        TextButton(
+            onPressed: () {
+              Leader.push(
+                  context,
+                  CommentPage(
+                    id: _novelStore.id,
+                    type: CommentArtWorkType.NOVEL,
+                  ));
+            },
+            child: Text(I18n.of(context).view_comment)),
+      ],
     );
   }
 
@@ -492,7 +503,7 @@ class _NovelViewerPageState extends State<NovelViewerPage> {
     );
   }
 
-  Widget _buildNumItem(NovelTextResponse resp, Novel novel) {
+  Widget _buildNumItem(Novel novel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4),
       child: Wrap(
@@ -555,13 +566,15 @@ class _NovelViewerPageState extends State<NovelViewerPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text('Pre'),
                 ),
-                buildListTile(_novelStore.novelTextResponse!.seriesPrev),
+                buildListTile(
+                    _novelStore.novelTextResponse!.seriesNavigation?.prevNovel),
                 Divider(),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text('Next'),
                 ),
-                buildListTile(_novelStore.novelTextResponse!.seriesNext),
+                buildListTile(
+                    _novelStore.novelTextResponse!.seriesNavigation?.nextNovel),
                 if (Platform.isAndroid)
                   ListTile(
                     title: Text(I18n.of(context).export),
@@ -597,8 +610,8 @@ class _NovelViewerPageState extends State<NovelViewerPage> {
         });
   }
 
-  Widget buildListTile(TextNovel? series) {
-    if (series == null || series.title == null || series.id == null)
+  Widget buildListTile(PrevNovel? series) {
+    if (series == null)
       return ListTile(
         title: Text("no more"),
       );
@@ -640,7 +653,7 @@ class _NovelViewerPageState extends State<NovelViewerPage> {
           allPath, "${_novelStore.novel!.title.trim().toLegal()}.txt");
       final filePath = Path.join(novelDirPath, "${_novelStore.novel!.id}.txt");
       final resultFile = File(filePath);
-      final data = _novelStore.novelTextResponse!.novelText;
+      final data = _novelStore.novelTextResponse!.text;
       // final json = jsonEncode(_novelStore.novelTextResponse!.toJson());
       resultFile.writeAsStringSync(data);
       File(fileInAllPath).writeAsStringSync(data);
@@ -669,7 +682,7 @@ class _NovelViewerPageState extends State<NovelViewerPage> {
           allPath, "${_novelStore.novel!.title.trim().toLegal()}.txt");
       final filePath = Path.join(novelDirPath, "${_novelStore.novel!.id}.txt");
       final resultFile = File(filePath);
-      final data = _novelStore.novelTextResponse!.novelText;
+      final data = _novelStore.novelTextResponse!.text;
       resultFile.writeAsStringSync(data);
       File(fileInAllPath).writeAsStringSync(data);
       LPrinter.d("path: $filePath");

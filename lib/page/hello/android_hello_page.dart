@@ -16,6 +16,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -54,10 +55,8 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
   DateTime? _preTime;
   double? bottomNavigatorHeight = null;
 
-  ValueNotifier<bool> isFullscreen = ValueNotifier(false);
-
   void toggleFullscreen() {
-    isFullscreen.value = !isFullscreen.value;
+    fullScreenStore.toggle();
   }
 
   @override
@@ -84,27 +83,27 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
     return LayoutBuilder(builder: (context, constraints) {
       final wide = constraints.maxWidth > constraints.maxHeight;
       return PopScope(
-        onPopInvoked: (didPop) async {
-          userSetting.setAnimContainer(!userSetting.animContainer);
-          if (didPop) return;
-          if (!userSetting.isReturnAgainToExit) {
-            return;
-          }
-          if (_preTime == null ||
-              DateTime.now().difference(_preTime!) > Duration(seconds: 2)) {
-            setState(() {
-              _preTime = DateTime.now();
-            });
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              duration: Duration(seconds: 1),
-              content: Text(I18n.of(context).return_again_to_exit),
-            ));
-          }
-        },
-        canPop: !userSetting.isReturnAgainToExit ||
-            _preTime != null &&
-                DateTime.now().difference(_preTime!) <= Duration(seconds: 2),
-        child: Scaffold(
+          onPopInvoked: (didPop) async {
+            userSetting.setAnimContainer(!userSetting.animContainer);
+            if (didPop) return;
+            if (!userSetting.isReturnAgainToExit) {
+              return;
+            }
+            if (_preTime == null ||
+                DateTime.now().difference(_preTime!) > Duration(seconds: 2)) {
+              setState(() {
+                _preTime = DateTime.now();
+              });
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                duration: Duration(seconds: 1),
+                content: Text(I18n.of(context).return_again_to_exit),
+              ));
+            }
+          },
+          canPop: !userSetting.isReturnAgainToExit ||
+              _preTime != null &&
+                  DateTime.now().difference(_preTime!) <= Duration(seconds: 2),
+          child: Scaffold(
             body: Row(children: [
               if (wide) ..._buildRail(context),
               Expanded(child: _buildPageView(context))
@@ -112,17 +111,15 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
             extendBody: true,
             bottomNavigationBar: wide
                 ? null
-                : ValueListenableBuilder<bool>(
-                    valueListenable: isFullscreen,
-                    builder: (BuildContext context, bool isFullscreen,
-                            Widget? child) =>
-                        AnimatedContainer(
-                          duration: const Duration(milliseconds: 400),
-                          transform: Matrix4.translationValues(
-                              0, isFullscreen ? bottomNavigatorHeight! : 0, 0),
-                          child: _buildNavigationBar(context),
-                        ))),
-      );
+                : AnimatedContainer(
+                    duration: const Duration(milliseconds: 400),
+                    transform: Matrix4.translationValues(
+                        0,
+                        fullScreenStore.fullscreen ? bottomNavigatorHeight! : 0,
+                        0),
+                    child: _buildNavigationBar(context),
+                  ),
+          ));
     });
   }
 
@@ -133,45 +130,49 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
         Positioned(
           bottom: MediaQuery.of(context).padding.bottom + 16,
           right: 16,
-          child: ValueListenableBuilder(
-            valueListenable: isFullscreen,
-            builder: (context, value, child) {
-              return AnimatedToggleFullscreenFAB(
-                  isFullscreen: value, toggleFullscreen: toggleFullscreen);
-            },
-          ),
+          child: AnimatedToggleFullscreenFAB(
+              isFullscreen: fullScreenStore.fullscreen,
+              toggleFullscreen: toggleFullscreen),
         )
       ],
     );
   }
 
-  NavigationBar _buildNavigationBar(BuildContext context) {
-    return NavigationBar(
-      destinations: [
-        NavigationDestination(
-            icon: Icon(Icons.home), label: I18n.of(context).home),
-        NavigationDestination(
-            icon: Icon(
-              Icons.leaderboard,
-            ),
-            label: I18n.of(context).rank),
-        NavigationDestination(
-            icon: Icon(Icons.favorite), label: I18n.of(context).quick_view),
-        NavigationDestination(
-            icon: Icon(Icons.search), label: I18n.of(context).search),
-        NavigationDestination(
-            icon: Icon(Icons.more_horiz), label: I18n.of(context).more)
-      ],
-      selectedIndex: index,
-      onDestinationSelected: (index) {
-        if (this.index == index) {
-          topStore.setTop("${index + 1}00");
-        }
-        setState(() {
-          this.index = index;
-        });
-        if (_pageController.hasClients) _pageController.jumpToPage(index);
-      },
+  Widget _buildNavigationBar(BuildContext context) {
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: NavigationBar(
+          height: 68,
+          backgroundColor:
+              Theme.of(context).colorScheme.surface.withOpacity(0.9),
+          destinations: [
+            NavigationDestination(
+                icon: Icon(Icons.home), label: I18n.of(context).home),
+            NavigationDestination(
+                icon: Icon(
+                  Icons.leaderboard,
+                ),
+                label: I18n.of(context).rank),
+            NavigationDestination(
+                icon: Icon(Icons.favorite), label: I18n.of(context).quick_view),
+            NavigationDestination(
+                icon: Icon(Icons.search), label: I18n.of(context).search),
+            NavigationDestination(
+                icon: Icon(Icons.more_horiz), label: I18n.of(context).more)
+          ],
+          selectedIndex: index,
+          onDestinationSelected: (index) {
+            if (this.index == index) {
+              topStore.setTop("${index + 1}00");
+            }
+            setState(() {
+              this.index = index;
+            });
+            if (_pageController.hasClients) _pageController.jumpToPage(index);
+          },
+        ),
+      ),
     );
   }
 
@@ -265,10 +266,7 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
     Constants.type = 0;
     _pageList = [
       RecomSpolightPage(),
-      RankPage(
-        isFullscreen: isFullscreen,
-        toggleFullscreen: toggleFullscreen,
-      ),
+      RankPage(),
       NewPage(),
       SearchPage(),
       SettingPage()
@@ -281,7 +279,8 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
       saveStore.listenBehavior(stream);
     });
     initPlatformState();
-    _intentDataStreamSubscription = ReceiveSharingIntent.getMediaStream()
+    _intentDataStreamSubscription = ReceiveSharingIntent.instance
+        .getMediaStream()
         .listen((List<SharedMediaFile> value) {
       for (var i in value) {
         if (i.type == SharedMediaType.text) {
@@ -303,7 +302,9 @@ class _AndroidHelloPageState extends State<AndroidHelloPage> {
     }, onError: (err) {
       print("getIntentDataStream error: $err");
     });
-    ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
+    ReceiveSharingIntent.instance
+        .getInitialMedia()
+        .then((List<SharedMediaFile> value) {
       for (var i in value) {
         if (i.type == SharedMediaType.text) {
           _showChromeLink(i.path);

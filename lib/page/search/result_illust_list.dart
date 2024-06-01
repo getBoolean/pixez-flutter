@@ -19,7 +19,6 @@ import 'dart:async';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:pixez/i18n.dart';
 import 'package:pixez/lighting/lighting_page.dart';
 import 'package:pixez/lighting/lighting_store.dart';
@@ -319,8 +318,12 @@ class _ResultIllustListState extends State<ResultIllustList> {
                         ),
                       ),
                       SwitchListTile(
-                        value: true,
-                        onChanged: (v) {},
+                        value: searchAIType != 1,
+                        onChanged: (v) {
+                          setS(() {
+                            searchAIType = !v ? 1 : 0;
+                          });
+                        },
                         title: Text(I18n.of(context).ai_generated),
                       ),
                       Container(

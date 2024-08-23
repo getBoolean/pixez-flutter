@@ -144,7 +144,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
     _scrollController = ScrollController();
     _illustStore = widget.store ?? IllustStore(widget.id, null);
     _illustStore.fetch();
-    _aboutStore = IllustAboutStore(widget.id);
+    _aboutStore = IllustAboutStore(widget.id, _refreshController);
     super.initState();
     supportTranslateCheck();
   }
@@ -155,7 +155,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
     if (oldWidget.store != widget.store) {
       _illustStore = widget.store ?? IllustStore(widget.id, null);
       _illustStore.fetch();
-      _aboutStore = IllustAboutStore(widget.id);
+      _aboutStore = IllustAboutStore(widget.id, _refreshController);
       LPrinter.d("state change");
     }
   }
@@ -165,7 +165,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
         _scrollController.hasClients &&
         _aboutStore.illusts.isEmpty &&
         !_aboutStore.fetching) {
-      _aboutStore.fetch();
+      _aboutStore.next();
     }
   }
 
@@ -334,7 +334,6 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
   }
 
   bool supportTranslate = false;
-  String _selectedText = "";
 
   Future<void> supportTranslateCheck() async {
     if (!Platform.isAndroid) return;
@@ -368,7 +367,7 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
           ),
         ),
       );
-    if (userStore == null) userStore = UserStore(data.user.id);
+    if (userStore == null) userStore = UserStore(data.user.id, null, data.user);
     return EasyRefresh(
       controller: _refreshController,
       header: PixezDefault.header(context),
@@ -755,7 +754,8 @@ class _IllustVerticalPageState extends State<IllustVerticalPage>
   }
 
   Widget _buildNameAvatar(BuildContext context, Illusts illust) {
-    if (userStore == null) userStore = UserStore(illust.user.id);
+    if (userStore == null)
+      userStore = UserStore(illust.user.id, null, illust.user);
     return Observer(builder: (_) {
       Future.delayed(Duration(seconds: 2), () {
         _loadAbout();

@@ -42,12 +42,14 @@ class _IllustDetailContentState extends State<IllustDetailContent> {
 
   late UserStore? userStore;
   late FocusNode _focusNode;
+  late IllustStore? _illustStore;
   String _selectedText = "";
 
   @override
   void initState() {
     _focusNode = FocusNode();
     _illusts = widget.illusts;
+    _illustStore = widget.illustStore;
     userStore = widget.userStore;
     super.initState();
     supportTranslateCheck();
@@ -61,6 +63,17 @@ class _IllustDetailContentState extends State<IllustDetailContent> {
   }
 
   @override
+  void didUpdateWidget(covariant IllustDetailContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.illusts.caption.isNotEmpty &&
+        widget.illusts.caption != oldWidget.illusts.caption) {
+      setState(() {
+        _illusts = widget.illusts;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Observer(builder: (_) {
       return Column(
@@ -70,7 +83,7 @@ class _IllustDetailContentState extends State<IllustDetailContent> {
           _buildInfoArea(context, _illusts),
           _buildNameAvatar(context, _illusts),
           _buildTagArea(context, _illusts),
-          if (_illusts.caption.isNotEmpty) _buildCaptionArea(_illusts),
+          _buildCaptionArea(_illusts),
           _buildCommentTextArea(context, _illusts),
           Padding(
             padding:
@@ -245,7 +258,36 @@ class _IllustDetailContentState extends State<IllustDetailContent> {
     );
   }
 
-  Container _buildCaptionArea(Illusts data) {
+  Widget _buildCaptionArea(Illusts data) {
+    final caption = data.caption.isEmpty
+        ? _illustStore?.illusts?.caption ?? ""
+        : data.caption;
+    if (caption.isEmpty && _illustStore?.captionFetchError == true) {
+      return Container(
+        margin: EdgeInsets.only(top: 4),
+        child: Container(
+          child: Center(
+            child: InkWell(
+                onTap: () {
+                  _illustStore?.fetch();
+                },
+                child: Icon(Icons.refresh)),
+          ),
+        ),
+      );
+    }
+    if (caption.isEmpty && _illustStore?.captionFetching == true) {
+      return Container(
+          child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: CircularProgressIndicator(),
+        ),
+      ));
+    }
+    if (caption.isEmpty) {
+      return Container(height: 1);
+    }
     return Container(
       margin: EdgeInsets.only(top: 4),
       child: Padding(
@@ -268,7 +310,7 @@ class _IllustDetailContentState extends State<IllustDetailContent> {
                   return _buildSelectionMenu(selectableRegionState, context);
                 },
                 child: SelectableHtml(
-                  data: data.caption.isEmpty ? "~" : data.caption,
+                  data: caption.isEmpty ? "~" : caption,
                 ),
               ),
             ),
@@ -314,29 +356,33 @@ class _IllustDetailContentState extends State<IllustDetailContent> {
   Widget _buildCommentTextArea(BuildContext context, Illusts data) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.only(
-            left: 16.0, right: 16.0, top: 8.0, bottom: 8.0),
+        padding: EdgeInsets.only(left: 16.0, right: 16.0),
         child: InkWell(
           onTap: () {
             Leader.push(context, CommentPage(id: data.id));
           },
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.comment,
-                  size: 16,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                SizedBox(
-                  width: 4,
-                ),
-                Text(
-                  I18n.of(context).view_comment,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-              ]),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.comment,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      I18n.of(context).view_comment,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ]),
+            ),
+          ),
         ),
       ),
     );
@@ -420,7 +466,7 @@ class _IllustDetailContentState extends State<IllustDetailContent> {
         height: 25,
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: const BorderRadius.all(Radius.circular(12.5)),
         ),
         child: Column(
@@ -470,7 +516,7 @@ class _IllustDetailContentState extends State<IllustDetailContent> {
 
   Widget _buildNameAvatar(BuildContext context, Illusts illust) {
     if (userStore == null)
-      userStore = UserStore(illust.user.id);
+      userStore = UserStore(illust.user.id, null, illust.user);
     return Observer(builder: (_) {
       return InkWell(
         onTap: () async {

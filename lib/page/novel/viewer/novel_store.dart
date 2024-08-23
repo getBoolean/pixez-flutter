@@ -16,6 +16,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
@@ -25,6 +26,8 @@ import 'package:pixez/models/novel_recom_response.dart';
 import 'package:pixez/models/novel_viewer_persist.dart';
 import 'package:pixez/models/novel_web_response.dart';
 import 'package:pixez/network/api_client.dart';
+import 'package:pixez/page/novel/viewer/image_text.dart';
+import 'package:flutter/widgets.dart';
 
 part 'novel_store.g.dart';
 
@@ -46,6 +49,8 @@ abstract class _NovelStoreBase with Store {
 
   @observable
   double bookedOffset = 0.0;
+  @observable
+  List<NovelSpansData> spans = [];
 
   NovelViewerPersistProvider _novelViewerPersistProvider =
       NovelViewerPersistProvider();
@@ -68,13 +73,14 @@ abstract class _NovelStoreBase with Store {
   }
 
   @action
-  fetch() async {
+  Future<void> fetch() async {
     errorMessage = null;
     try {
       bookedOffset = 0.0;
       final response = await apiClient.webviewNovel(id);
       String json = _parseHtml(response.data)!;
       novelTextResponse = NovelWebResponse.fromJson(jsonDecode(json));
+      spans = await compute(buildSpans, novelTextResponse!);
       if (novel == null) {
         Response response = await apiClient.getNovelDetail(id);
         novel = Novel.fromJson(response.data['novel']);
@@ -91,19 +97,11 @@ abstract class _NovelStoreBase with Store {
     var document = parse(html);
     final scriptElement = document.querySelector('script')!;
     String scriptContent = scriptElement.innerHtml;
-
-    final novelStart = 'novel: ';
-    final startIndex = scriptContent.indexOf(novelStart) + novelStart.length;
-    final stack = <int>[];
-    for (var i = startIndex; i < scriptContent.length; i++) {
-      if (scriptContent[i] == '{') {
-        stack.add(i);
-      } else if (scriptContent[i] == '}') {
-        stack.removeLast();
-        if (stack.isEmpty) {
-          return scriptContent.substring(startIndex, i + 1);
-        }
-      }
+    final novelRegex = RegExp(r'novel: ({.*?}),\n\s*isOwnWork');
+    final match = novelRegex.firstMatch(scriptContent);
+    if (match != null) {
+      final novelJsonString = match.group(1);
+      return novelJsonString;
     }
     return null;
   }
@@ -120,4 +118,18 @@ abstract class _NovelStoreBase with Store {
       }
     } catch (e) {}
   }
+}
+
+class ComputeSpan {
+  final BuildContext context;
+  final NovelWebResponse webResponse;
+
+  ComputeSpan(this.context, this.webResponse);
+}
+
+Future<List<NovelSpansData>> buildSpans(NovelWebResponse webResponse) {
+  return Future.delayed(Duration(milliseconds: 100), () {
+    NovelSpansGenerator novelSpansGenerator = NovelSpansGenerator();
+    return novelSpansGenerator.buildSpans(webResponse);
+  });
 }

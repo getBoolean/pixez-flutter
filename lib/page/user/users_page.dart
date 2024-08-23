@@ -82,7 +82,7 @@ class _UsersPageState extends State<UsersPage> with TickerProviderStateMixin {
     _bookmarkStore = LightingStore(ApiForceSource(
         futureGet: (e) =>
             apiClient.getBookmarksIllust(widget.id, restrict, null)));
-    userStore = widget.userStore ?? UserStore(widget.id);
+    userStore = widget.userStore ?? UserStore(widget.id, null, null);
     _tabController = TabController(length: 3, vsync: this);
     _scrollController = ScrollController();
     _scrollController.addListener(() {
@@ -152,7 +152,7 @@ class _UsersPageState extends State<UsersPage> with TickerProviderStateMixin {
         }
       }
 
-      if (userStore.errorMessage != null && userStore.user != null) {
+      if (userStore.errorMessage != null && userStore.user == null) {
         if (userStore.errorMessage!.contains("404"))
           return Scaffold(
             appBar: AppBar(),
@@ -538,10 +538,11 @@ class _UsersPageState extends State<UsersPage> with TickerProviderStateMixin {
       },
       itemBuilder: (context) {
         return [
-          PopupMenuItem<int>(
-            value: 0,
-            child: Text(I18n.of(context).quietly_follow),
-          ),
+          if (!userStore.isFollow)
+            PopupMenuItem<int>(
+              value: 0,
+              child: Text(I18n.of(context).quietly_follow),
+            ),
           PopupMenuItem<int>(
             value: 1,
             child: Text(I18n.of(context).block_user),
@@ -629,7 +630,7 @@ class _UsersPageState extends State<UsersPage> with TickerProviderStateMixin {
       height: 60,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
-        child: SelectionContainer.disabled(
+        child: SelectionArea(
           child: SingleChildScrollView(
             child: Text(
               userStore.userDetail == null

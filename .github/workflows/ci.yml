@@ -10,12 +10,12 @@ on:
 
 env:
   FLUTTER_CHANNEL: "stable"
-  FLUTTER_VERSION: "any"
+  FLUTTER_VERSION: "3.22.3"
 
 jobs:
   build_ios_without_signing:
     name: Build Flutter for iOS (Without Signing)
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install and set Flutter version
         uses: subosito/flutter-action@v2

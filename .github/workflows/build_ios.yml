@@ -5,14 +5,15 @@ jobs:
   Build_IOS:
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.22.3'
       - run: flutter --version
       - run: flutter pub get
-      - run: flutter packages pub run build_runner build --delete-conflicting-outputs
+      - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter build ios --release --no-codesign
       - name: Create Payload directory and move Runner.app
         run: |

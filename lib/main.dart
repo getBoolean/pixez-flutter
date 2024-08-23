@@ -18,6 +18,7 @@ import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flex_seed_scheme/flex_seed_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -28,13 +29,13 @@ import 'package:pixez/er/fetcher.dart';
 import 'package:pixez/er/hoster.dart';
 import 'package:pixez/fluent/fluentui.dart';
 import 'package:pixez/network/onezero_client.dart';
-import 'package:pixez/page/history/history_store.dart';
 import 'package:pixez/page/novel/history/novel_history_store.dart';
 import 'package:pixez/page/splash/splash_page.dart';
 import 'package:pixez/page/splash/splash_store.dart';
 import 'package:pixez/single_instance_plugin.dart';
 import 'package:pixez/store/account_store.dart';
 import 'package:pixez/store/book_tag_store.dart';
+import 'package:pixez/store/fullscreen_store.dart';
 import 'package:pixez/store/mute_store.dart';
 import 'package:pixez/store/save_store.dart';
 import 'package:pixez/store/tag_history_store.dart';
@@ -49,13 +50,13 @@ final SaveStore saveStore = SaveStore();
 final MuteStore muteStore = MuteStore();
 final AccountStore accountStore = AccountStore();
 final TagHistoryStore tagHistoryStore = TagHistoryStore();
-final HistoryStore historyStore = HistoryStore();
 final NovelHistoryStore novelHistoryStore = NovelHistoryStore();
 final TopStore topStore = TopStore();
 final BookTagStore bookTagStore = BookTagStore();
-OnezeroClient onezeroClient = OnezeroClient();
+final OnezeroClient onezeroClient = OnezeroClient();
 final SplashStore splashStore = SplashStore(onezeroClient);
 final Fetcher fetcher = new Fetcher();
+final FullScreenStore fullScreenStore = FullScreenStore();
 
 main(List<String> args) async {
   if (Platform.isWindows || Platform.isLinux) {
@@ -189,7 +190,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             return child;
           },
           themeMode: userSetting.themeMode,
-          theme: ThemeData.light().copyWith(colorScheme: lightColorScheme),
+          theme: ThemeData.light().copyWith(
+            primaryColor: lightColorScheme.primary,
+            colorScheme: lightColorScheme,
+            scaffoldBackgroundColor: lightColorScheme.surface,
+            cardColor: lightColorScheme.surfaceContainer,
+            chipTheme: ChipThemeData(
+              backgroundColor: lightColorScheme.surface,
+            ),
+          ),
           darkTheme: ThemeData.dark().copyWith(
               scaffoldBackgroundColor:
                   userSetting.isAMOLED ? Colors.black : null,

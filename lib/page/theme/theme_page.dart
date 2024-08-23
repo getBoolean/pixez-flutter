@@ -16,8 +16,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:pixez/component/picker/colorpicker.dart';
 import 'package:pixez/i18n.dart';
 import 'package:pixez/main.dart';
 
@@ -87,7 +87,7 @@ class _ColorPickPageState extends State<ColorPickPage> {
               onPressed: () async {
                 final TextEditingController textEditingController =
                     TextEditingController(
-                        text: pickerColor.value
+                        text: pickerColor
                             .toString()
                             .toLowerCase()
                             .replaceAll('color(0xff', '')

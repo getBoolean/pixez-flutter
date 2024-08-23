@@ -29,6 +29,7 @@
 .pub/
 /build/
 **/*.g.dart
+**/*.freezed.dart
 /lib/generated/
 .fvm/flutter_sdk
 

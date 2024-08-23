@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -24,16 +25,7 @@ import 'package:pixez/page/hello/ranking/rank_store.dart';
 import 'package:pixez/page/hello/ranking/ranking_mode/rank_mode_page.dart';
 
 class RankPage extends StatefulWidget {
-  late ValueNotifier<bool> isFullscreen;
-  late Function? toggleFullscreen;
-  RankPage({
-    Key? key,
-    ValueNotifier<bool>? isFullscreen,
-    this.toggleFullscreen,
-  }) : super(key: key) {
-    this.isFullscreen =
-        isFullscreen == null ? ValueNotifier(false) : isFullscreen;
-  }
+  RankPage({Key? key});
 
   @override
   _RankPageState createState() => _RankPageState();
@@ -92,10 +84,6 @@ class _RankPageState extends State<RankPage>
   int index = 0;
   int tapCount = 0;
 
-  toggleFullscreen() {
-    if (widget.toggleFullscreen != null) widget.toggleFullscreen!();
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -115,57 +103,52 @@ class _RankPageState extends State<RankPage>
           length: rankStore.modeList.length,
           child: Column(
             children: <Widget>[
-              ValueListenableBuilder<bool>(
-                  valueListenable: widget.isFullscreen,
-                  builder: (BuildContext context, bool? isFullscreen,
-                          Widget? child) =>
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 400),
-                        height: isFullscreen == false
-                            ? (kToolbarHeight +
-                                MediaQuery.of(context).padding.top)
-                            : 0,
-                        child: AppBar(
-                          title: TabBar(
-                            onTap: (i) => setState(() {
-                              this.index = i;
-                            }),
-                            tabAlignment: TabAlignment.start,
-                            indicatorSize: TabBarIndicatorSize.label,
-                            isScrollable: true,
-                            tabs: <Widget>[
-                              for (var i in titles)
-                                Tab(
-                                  text: i,
-                                ),
-                            ],
-                          ),
-                          actions: <Widget>[
-                            if (widget.toggleFullscreen != null)
-                              IconButton(
-                                icon: Icon(Icons.fullscreen),
-                                onPressed: () {
-                                  toggleFullscreen();
-                                },
-                              ),
-                            Visibility(
-                              visible: index < rankStore.modeList.length,
-                              child: IconButton(
-                                icon: Icon(Icons.date_range),
-                                onPressed: () async {
-                                  await _showTimePicker(context);
-                                },
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.undo),
-                              onPressed: () {
-                                rankStore.reset();
-                              },
-                            )
-                          ],
+              AnimatedContainer(
+                duration: Duration(milliseconds: 400),
+                height: !fullScreenStore.fullscreen
+                    ? (kToolbarHeight + MediaQuery.of(context).padding.top)
+                    : 0,
+                child: AppBar(
+                  title: TabBar(
+                    onTap: (i) => setState(() {
+                      this.index = i;
+                    }),
+                    tabAlignment: TabAlignment.start,
+                    indicatorSize: TabBarIndicatorSize.label,
+                    isScrollable: true,
+                    tabs: <Widget>[
+                      for (var i in titles)
+                        Tab(
+                          text: i,
                         ),
-                      )),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    if (Platform.isAndroid)
+                      IconButton(
+                        icon: Icon(Icons.fullscreen),
+                        onPressed: () {
+                          fullScreenStore.toggle();
+                        },
+                      ),
+                    Visibility(
+                      visible: index < rankStore.modeList.length,
+                      child: IconButton(
+                        icon: Icon(Icons.date_range),
+                        onPressed: () async {
+                          await _showTimePicker(context);
+                        },
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.undo),
+                      onPressed: () {
+                        rankStore.reset();
+                      },
+                    )
+                  ],
+                ),
+              ),
               Expanded(
                 child: TabBarView(children: [
                   for (var element in rankStore.modeList)

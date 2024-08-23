@@ -92,7 +92,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Check Java Version
-        run: java --version
+        run: |
+          java --version
+          which java
 
       - name: Get Packages
         run: flutter pub get

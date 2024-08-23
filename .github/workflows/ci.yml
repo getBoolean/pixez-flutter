@@ -73,6 +73,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Install Java JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Check Java Version
+        run: |
+          java --version
+          which java
+
       - name: Install and set Flutter version
         uses: subosito/flutter-action@v2
         with:
@@ -84,17 +95,6 @@ jobs:
 
       - name: Check Flutter Version
         run: flutter --version
-
-      - name: Install Java JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Check Java Version
-        run: |
-          java --version
-          which java
 
       - name: Get Packages
         run: flutter pub get

@@ -91,6 +91,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Check Java Version
+        run: java --version
+
       - name: Get Packages
         run: flutter pub get
 

@@ -68,7 +68,7 @@ jobs:
 
   build_android:
     name: Build Flutter for Android
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

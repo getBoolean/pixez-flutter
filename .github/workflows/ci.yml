@@ -10,12 +10,12 @@ on:
 
 env:
   FLUTTER_CHANNEL: "stable"
-  FLUTTER_VERSION: "3.22.3"
+  FLUTTER_VERSION: "3.24.3"
 
 jobs:
   build_ios_without_signing:
     name: Build Flutter for iOS (Without Signing)
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -68,7 +68,7 @@ jobs:
 
   build_android:
     name: Build Flutter for Android
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

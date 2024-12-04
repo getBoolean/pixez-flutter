@@ -296,7 +296,9 @@
     "clean_history": "Hapus Riwayat?",
     "novel": "Novel",
     "bulletin_board": "Papan buletin",
-    "hide": "Hide",
-    "reveal": "Reveal"
+    "hide": "Sembunyikan",
+    "reveal": "Perlihatkan",
+    "illust_page": "Illust page",
+    "novel_page": "Novel page"
   }
   

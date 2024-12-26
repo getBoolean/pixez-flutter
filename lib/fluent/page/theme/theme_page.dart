@@ -13,7 +13,7 @@
  *  this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:fluent_ui/fluent_ui.dart' hide ColorPicker;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:pixez/component/picker/colorpicker.dart';
 import 'package:pixez/i18n.dart';
@@ -48,7 +48,7 @@ class _ColorPickPageState extends State<ColorPickPage> {
                 onPressed: () async {
                   final TextEditingController textEditingController =
                       TextEditingController(
-                          text: pickerColor.value
+                          text: pickerColor.colorValue
                               .toString()
                               .toLowerCase()
                               .replaceAll('color(0xff', '')

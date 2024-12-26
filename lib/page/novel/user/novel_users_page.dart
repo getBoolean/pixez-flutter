@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +13,6 @@ import 'package:pixez/component/painter_avatar.dart';
 import 'package:pixez/component/pixiv_image.dart';
 import 'package:pixez/document_plugin.dart';
 import 'package:pixez/er/hoster.dart';
-import 'package:pixez/exts.dart';
 import 'package:pixez/i18n.dart';
 import 'package:pixez/main.dart';
 import 'package:pixez/models/illust.dart';
@@ -254,7 +252,7 @@ class _NovelUsersPageState extends State<NovelUsersPage>
 
   _saveUserBg(String url) async {
     try {
-      final result = await pixivCacheManager.downloadFile(url, authHeaders: {
+      final result = await pixivCacheManager!.downloadFile(url, authHeaders: {
         'referer': 'https://app-api.pixiv.net/',
       });
       final bytes = await result.file.readAsBytes();
@@ -283,14 +281,9 @@ class _NovelUsersPageState extends State<NovelUsersPage>
       String tempFile = (await getTemporaryDirectory()).path + "/$fileName";
       final dio = Dio(BaseOptions(headers: Hoster.header(url: url)));
       if (!userSetting.disableBypassSni) {
-        dio.httpClientAdapter = IOHttpClientAdapter()
-          ..createHttpClient = () {
-            return HttpClient()
-              ..badCertificateCallback =
-                  (X509Certificate cert, String host, int port) => true;
-          };
+        dio.httpClientAdapter = await ApiClient.createCompatibleClient();
       }
-      await dio.download(url.toTrueUrl(), tempFile, deleteOnError: true);
+      await dio.download(url, tempFile, deleteOnError: true);
       File file = File(tempFile);
       if (file.existsSync()) {
         await saveStore.saveToGallery(
